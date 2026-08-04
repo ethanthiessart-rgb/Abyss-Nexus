@@ -1,0 +1,10 @@
+'use strict';
+(() => {
+  const $=s=>document.querySelector(s),toast=$('#toast'),td=$('#training-dialog'),ad=$('#assign-dialog');
+  const show=m=>{toast.textContent=m;toast.classList.add('is-visible');setTimeout(()=>toast.classList.remove('is-visible'),2200)};
+  async function api(url,opt={}){const r=await fetch(url,{headers:{'Content-Type':'application/json',Accept:'application/json',...(opt.headers||{})},...opt});const d=await r.json();if(!r.ok)throw new Error(d.message||'Erreur');return d}
+  async function load(){const [d,u]=await Promise.all([api('/api/training'),api('/api/employees')]);$('#training-list').innerHTML=d.trainings.map(x=>`<article class="data-card"><strong>${x.title}</strong><p>${x.category}</p><span>${x.description||''}</span></article>`).join('');$('#assignment-list').innerHTML=d.assignments.map(x=>`<article class="data-card"><strong>${x.employeeName} — ${x.trainingTitle}</strong><p>${x.status}</p></article>`).join('');$('#assign-employee').innerHTML=u.employees.map(x=>`<option value="${x.id}">${x.username}</option>`).join('');$('#assign-training-select').innerHTML=d.trainings.filter(x=>x.active).map(x=>`<option value="${x.id}">${x.title}</option>`).join('')}
+  $('#new-training').onclick=()=>td.showModal();$('#assign-training').onclick=()=>ad.showModal();$('#cancel-training').onclick=()=>td.close();$('#cancel-assign').onclick=()=>ad.close();
+  $('#training-form').onsubmit=async e=>{e.preventDefault();try{const d=await api('/api/training',{method:'POST',body:JSON.stringify({title:$('#training-title').value.trim(),category:$('#training-category').value.trim(),description:$('#training-description').value.trim()})});td.close();e.target.reset();show(d.message);load()}catch(err){show(err.message)}};
+  $('#assign-form').onsubmit=async e=>{e.preventDefault();try{const d=await api('/api/training/assign',{method:'POST',body:JSON.stringify({employeeUserId:Number($('#assign-employee').value),trainingId:Number($('#assign-training-select').value)})});ad.close();show(d.message);load()}catch(err){show(err.message)}};load().catch(e=>show(e.message));
+})();

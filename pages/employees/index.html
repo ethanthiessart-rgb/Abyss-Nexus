@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Employés</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/employees.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div>
+        <p class="topbar-kicker">EMPLOYEE HUB</p>
+        <h1>Dossiers employés</h1>
+      </div>
+      <input id="employee-search" class="search-input" type="search" placeholder="Rechercher">
+    </header>
+
+    <section class="employee-layout">
+      <article class="panel-card employee-list-panel">
+        <div id="employee-list" class="employee-list"></div>
+      </article>
+
+      <article class="panel-card employee-detail-panel">
+        <div id="employee-placeholder" class="detail-placeholder">Sélectionnez un employé.</div>
+        <div id="employee-content" hidden>
+          <header class="employee-profile">
+            <img id="employee-avatar" src="/assets/logos/abyss-nexus-logo.png" alt="">
+            <div>
+              <h2 id="employee-name">—</h2>
+              <p id="employee-meta">—</p>
+              <span id="employee-status" class="status-chip">—</span>
+            </div>
+          </header>
+
+          <nav class="employee-tabs">
+            <button data-tab="info" class="is-active">Informations</button>
+            <button data-tab="reports">Rapports</button>
+            <button data-tab="sanctions">Sanctions</button>
+            <button data-tab="evaluations">Évaluations</button>
+            <button data-tab="training">Formations</button>
+            <button data-tab="career">Carrière</button>
+            <button data-tab="history">Historique</button>
+          </nav>
+
+          <section id="employee-tab-content" class="employee-tab-content"></section>
+        </div>
+      </article>
+    </section>
+  </main>
+</div>
+<div id="toast" class="toast"></div>
+<script src="/js/employees/employees.js" defer></script>
+</body>
+</html>

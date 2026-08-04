@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Dashboard Direction</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/direction-dashboard.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+
+  <main class="main-panel direction-main">
+    <header class="topbar direction-topbar">
+      <div>
+        <p class="topbar-kicker">DIRECTION COMMAND CENTER</p>
+        <h1>Dashboard Direction</h1>
+        <p id="dashboard-generated-at" class="generated-at">Chargement…</p>
+      </div>
+
+      <button id="refresh-direction" class="primary-action" type="button">
+        Actualiser
+      </button>
+    </header>
+
+    <section class="direction-alerts">
+      <article class="direction-kpi direction-kpi-critical">
+        <span>Demandes en attente</span>
+        <strong id="pending-total">0</strong>
+        <small id="pending-detail">—</small>
+      </article>
+
+      <article class="direction-kpi">
+        <span>Personnel actif</span>
+        <strong id="personnel-active">0</strong>
+        <small id="personnel-detail">—</small>
+      </article>
+
+      <article class="direction-kpi">
+        <span>Services aujourd’hui</span>
+        <strong id="planning-today">0</strong>
+        <small id="planning-detail">—</small>
+      </article>
+
+      <article class="direction-kpi">
+        <span>Formations en cours</span>
+        <strong id="training-ongoing">0</strong>
+        <small id="training-detail">—</small>
+      </article>
+
+      <article class="direction-kpi">
+        <span>Notifications non lues</span>
+        <strong id="notifications-unread">0</strong>
+        <small>Ensemble du portail</small>
+      </article>
+    </section>
+
+    <section class="direction-grid">
+      <article class="panel-card direction-card">
+        <header class="direction-card-header">
+          <div>
+            <p class="panel-kicker">RESSOURCES HUMAINES</p>
+            <h2>Situation du personnel</h2>
+          </div>
+          <a href="/employees">Ouvrir les dossiers</a>
+        </header>
+
+        <div class="mini-stat-grid">
+          <div><span>Total</span><strong id="staff-total">0</strong></div>
+          <div><span>Actifs</span><strong id="staff-active">0</strong></div>
+          <div><span>Absents aujourd’hui</span><strong id="staff-absent">0</strong></div>
+          <div><span>Suspendus</span><strong id="staff-suspended">0</strong></div>
+          <div><span>Nouveaux ce mois</span><strong id="staff-new">0</strong></div>
+        </div>
+      </article>
+
+      <article class="panel-card direction-card">
+        <header class="direction-card-header">
+          <div>
+            <p class="panel-kicker">RAPPORTS</p>
+            <h2>Workflow Direction</h2>
+          </div>
+          <a href="/reports-advanced">Traiter</a>
+        </header>
+
+        <div class="mini-stat-grid">
+          <div><span>En attente</span><strong id="reports-pending">0</strong></div>
+          <div><span>Validés</span><strong id="reports-validated">0</strong></div>
+          <div><span>Refusés</span><strong id="reports-rejected">0</strong></div>
+          <div><span>Corrections</span><strong id="reports-corrections">0</strong></div>
+        </div>
+      </article>
+
+      <article class="panel-card direction-card">
+        <header class="direction-card-header">
+          <div>
+            <p class="panel-kicker">DISCIPLINE</p>
+            <h2>Sanctions</h2>
+          </div>
+          <a href="/sanctions-advanced">Consulter</a>
+        </header>
+
+        <div class="mini-stat-grid">
+          <div><span>Aujourd’hui</span><strong id="sanctions-today">0</strong></div>
+          <div><span>7 derniers jours</span><strong id="sanctions-week">0</strong></div>
+          <div><span>Ce mois</span><strong id="sanctions-month">0</strong></div>
+          <div><span>À valider</span><strong id="sanctions-pending">0</strong></div>
+        </div>
+      </article>
+
+      <article class="panel-card direction-card">
+        <header class="direction-card-header">
+          <div>
+            <p class="panel-kicker">SYSTÈME</p>
+            <h2>État technique</h2>
+          </div>
+          <a href="/system">Centre système</a>
+        </header>
+
+        <dl id="system-data" class="system-data"></dl>
+      </article>
+
+      <article class="panel-card direction-card direction-card-wide">
+        <header class="direction-card-header">
+          <div>
+            <p class="panel-kicker">DÉPARTEMENTS</p>
+            <h2>Personnel actif par département</h2>
+          </div>
+        </header>
+
+        <div id="department-chart" class="bar-chart"></div>
+      </article>
+
+      <article class="panel-card direction-card direction-card-wide">
+        <header class="direction-card-header">
+          <div>
+            <p class="panel-kicker">ACTIVITÉ SUR 7 JOURS</p>
+            <h2>Rapports et sanctions</h2>
+          </div>
+        </header>
+
+        <div class="trend-legend">
+          <span>Rapports</span>
+          <span>Sanctions</span>
+        </div>
+        <div id="trend-chart" class="trend-chart"></div>
+      </article>
+
+      <article class="panel-card direction-card direction-card-full">
+        <header class="direction-card-header">
+          <div>
+            <p class="panel-kicker">ALERTES IMPORTANTES</p>
+            <h2>Dernières actions sensibles</h2>
+          </div>
+          <a href="/audit">Journal complet</a>
+        </header>
+
+        <div id="direction-alert-list" class="direction-alert-list"></div>
+      </article>
+    </section>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="/js/direction-dashboard/direction-dashboard.js" defer></script>
+</body>
+</html>

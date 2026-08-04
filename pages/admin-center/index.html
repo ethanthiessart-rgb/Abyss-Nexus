@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Administration avancée</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/admin-center.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div>
+        <p class="topbar-kicker">ADVANCED ADMINISTRATION</p>
+        <h1>Grades et hiérarchie</h1>
+      </div>
+      <button id="new-grade" class="primary-action">Nouveau grade</button>
+    </header>
+
+    <section class="admin-layout">
+      <article class="panel-card">
+        <p class="panel-kicker">HIÉRARCHIE</p>
+        <div id="grade-list" class="grade-list"></div>
+      </article>
+
+      <article class="panel-card">
+        <p class="panel-kicker">APERÇU DES DROITS</p>
+        <label class="block-label">Employé
+          <select id="rights-user"></select>
+        </label>
+        <button id="load-rights" class="secondary-action">Analyser les droits</button>
+        <div id="rights-result" class="rights-result"></div>
+      </article>
+    </section>
+  </main>
+</div>
+
+<dialog id="grade-dialog" class="modal">
+  <form id="grade-form" class="modal-card">
+    <h2 id="grade-dialog-title">Nouveau grade</h2>
+    <input id="grade-id" type="hidden">
+    <label>Nom<input id="grade-name" required></label>
+    <label>Niveau hiérarchique<input id="grade-level" type="number" min="0" max="999" value="0"></label>
+    <label>Couleur<input id="grade-color" type="color" value="#3aa9ff"></label>
+    <label>Département<select id="grade-department"><option value="">Tous</option></select></label>
+    <label>Description<textarea id="grade-description" rows="4"></textarea></label>
+    <label class="check-row"><input id="grade-active" type="checkbox" checked> Grade actif</label>
+    <fieldset id="grade-permissions"><legend>Permissions héritées</legend></fieldset>
+    <div class="dialog-actions">
+      <button id="cancel-grade" class="secondary-action" type="button">Annuler</button>
+      <button class="primary-action" type="submit">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast"></div>
+<script src="/js/admin-center/admin-center.js" defer></script>
+</body>
+</html>

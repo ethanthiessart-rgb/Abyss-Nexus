@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Bibliothèque documentaire</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/document-library.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div>
+        <p class="topbar-kicker">DOCUMENT KNOWLEDGE BASE</p>
+        <h1>Bibliothèque documentaire</h1>
+      </div>
+      <div class="topbar-actions">
+        <button id="new-folder" class="secondary-action">Nouveau dossier</button>
+        <button id="new-document" class="primary-action">Nouveau document</button>
+      </div>
+    </header>
+
+    <section class="document-layout">
+      <aside class="panel-card">
+        <input id="document-search" type="search" placeholder="Rechercher">
+        <div id="folder-list" class="folder-list"></div>
+      </aside>
+
+      <article class="panel-card">
+        <div id="document-list" class="document-list"></div>
+      </article>
+
+      <article class="panel-card document-reader">
+        <div id="document-placeholder">Sélectionnez un document.</div>
+        <div id="document-content" hidden>
+          <header>
+            <div>
+              <h2 id="reader-title"></h2>
+              <p id="reader-meta"></p>
+            </div>
+            <button id="new-version" class="secondary-action">Nouvelle version</button>
+          </header>
+          <p id="reader-summary"></p>
+          <div id="reader-body" class="reader-body"></div>
+          <p class="panel-kicker">HISTORIQUE DES VERSIONS</p>
+          <div id="version-list"></div>
+        </div>
+      </article>
+    </section>
+  </main>
+</div>
+
+<dialog id="folder-dialog" class="modal">
+  <form id="folder-form" class="modal-card">
+    <h2>Nouveau dossier</h2>
+    <label>Nom<input id="folder-name" required></label>
+    <label>Département<input id="folder-department"></label>
+    <label>Description<textarea id="folder-description" rows="4"></textarea></label>
+    <div class="dialog-actions">
+      <button id="cancel-folder" class="secondary-action" type="button">Annuler</button>
+      <button class="primary-action">Créer</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="document-dialog" class="modal">
+  <form id="document-form" class="modal-card">
+    <h2>Nouveau document</h2>
+    <label>Dossier<select id="document-folder"><option value="">Sans dossier</option></select></label>
+    <label>Titre<input id="document-title" required></label>
+    <label>Résumé<textarea id="document-summary" rows="3"></textarea></label>
+    <label>Tags séparés par des virgules<input id="document-tags"></label>
+    <label>Visibilité<select id="document-visibility">
+      <option value="public">Tous les employés</option>
+      <option value="department">Département</option>
+      <option value="private">Privé</option>
+    </select></label>
+    <label>Département<input id="document-department"></label>
+    <label>Contenu<textarea id="document-body" rows="12" required></textarea></label>
+    <div class="dialog-actions">
+      <button id="cancel-document" class="secondary-action" type="button">Annuler</button>
+      <button class="primary-action">Créer</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="version-dialog" class="modal">
+  <form id="version-form" class="modal-card">
+    <h2>Nouvelle version</h2>
+    <label>Note de modification<input id="version-note"></label>
+    <label>Contenu<textarea id="version-body" rows="14" required></textarea></label>
+    <div class="dialog-actions">
+      <button id="cancel-version" class="secondary-action" type="button">Annuler</button>
+      <button class="primary-action">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast"></div>
+<script src="/js/document-library/document-library.js" defer></script>
+</body>
+</html>

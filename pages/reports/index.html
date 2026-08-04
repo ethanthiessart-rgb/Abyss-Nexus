@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Abyss Nexus — Rapports</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/reports.css">
+</head>
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <img src="/assets/logos/abyss-nexus-logo.png" alt="Logo Abyss Nexus">
+        <div><strong>ABYSS NEXUS</strong><span>Staff Management System</span></div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-item" href="/dashboard">Tableau de bord</a>
+        <a id="personnel-link" class="nav-item" href="/personnel">Personnel</a>
+        <a class="nav-item is-active" href="/reports">Rapports</a>
+        <button class="nav-item" type="button" disabled>Messagerie</button>
+        <button class="nav-item" type="button" disabled>Annonces</button>
+        <button class="nav-item" type="button" disabled>Documents</button>
+        <button class="nav-item" type="button" disabled>Mes sanctions</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span>Core v1.0</span>
+        <button id="logout-button" class="logout-button" type="button">Se déconnecter</button>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div>
+          <p class="topbar-kicker">INCIDENT REPORTING MODULE</p>
+          <h1>Rapports</h1>
+        </div>
+        <div class="topbar-actions">
+          <input id="report-search" class="report-search" type="search" placeholder="Rechercher un rapport">
+          <button id="new-report-button" class="primary-action" type="button">Nouveau rapport</button>
+        </div>
+      </header>
+
+      <section class="report-stats">
+        <article><span>Total visible</span><strong id="report-total">0</strong></article>
+        <article><span>En attente</span><strong id="report-pending">0</strong></article>
+        <article><span>Validés</span><strong id="report-validated">0</strong></article>
+        <article><span>Brouillons</span><strong id="report-drafts">0</strong></article>
+      </section>
+
+      <section class="reports-layout">
+        <article class="panel-card reports-list-panel">
+          <div class="filters-row">
+            <select id="status-filter">
+              <option value="">Tous les statuts</option>
+              <option value="draft">Brouillons</option>
+              <option value="submitted">Envoyés</option>
+              <option value="read">Lus</option>
+              <option value="needs_revision">À corriger</option>
+              <option value="validated">Validés</option>
+              <option value="refused">Refusés</option>
+              <option value="archived">Archivés</option>
+            </select>
+            <select id="type-filter">
+              <option value="">Tous les types</option>
+            </select>
+          </div>
+          <div id="reports-list" class="reports-list"></div>
+          <p id="reports-empty" class="empty-state" hidden>Aucun rapport trouvé.</p>
+        </article>
+
+        <article class="panel-card report-detail-panel">
+          <div id="report-placeholder" class="detail-placeholder">
+            Sélectionnez un rapport pour le consulter.
+          </div>
+
+          <div id="report-detail" hidden>
+            <header class="report-detail-header">
+              <div>
+                <p id="detail-number" class="panel-kicker">ANX-RPT-000000</p>
+                <h2 id="detail-title">Titre</h2>
+                <p id="detail-meta" class="detail-meta"></p>
+              </div>
+              <span id="detail-status" class="report-status">—</span>
+            </header>
+
+            <div class="author-card">
+              <img id="detail-avatar" src="/assets/logos/abyss-nexus-logo.png" alt="">
+              <div>
+                <strong id="detail-author">—</strong>
+                <span id="detail-author-info">—</span>
+              </div>
+            </div>
+
+            <div id="detail-content" class="report-content"></div>
+
+            <div class="signature-card">
+              <span>Signé électroniquement par</span>
+              <strong id="detail-signature">—</strong>
+              <small id="detail-signature-date">—</small>
+            </div>
+
+            <section id="direction-review" class="direction-review" hidden>
+              <p class="panel-kicker">DÉCISION DE LA DIRECTION</p>
+              <label>Statut
+                <select id="review-status">
+                  <option value="read">Lu par la Direction</option>
+                  <option value="needs_revision">À corriger</option>
+                  <option value="validated">Validé</option>
+                  <option value="refused">Refusé</option>
+                  <option value="archived">Archivé</option>
+                </select>
+              </label>
+              <label>Commentaire
+                <textarea id="review-comment" rows="4" placeholder="Commentaire facultatif"></textarea>
+              </label>
+              <button id="save-review" class="primary-action" type="button">Enregistrer la décision</button>
+            </section>
+
+            <section id="author-actions" class="author-actions" hidden>
+              <button id="edit-draft" class="secondary-action" type="button">Modifier le brouillon</button>
+              <button id="submit-draft" class="primary-action" type="button">Envoyer le brouillon</button>
+            </section>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="report-dialog" class="modal">
+    <form id="report-form" class="modal-card">
+      <header>
+        <div>
+          <p class="panel-kicker">NOUVEAU RAPPORT</p>
+          <h2 id="report-dialog-title">Rédiger un rapport</h2>
+        </div>
+        <button id="close-report-dialog" class="close-button" type="button">×</button>
+      </header>
+
+      <section class="identity-preview">
+        <div><span>Pseudonyme Discord</span><strong id="form-username">—</strong></div>
+        <div><span>Matricule staff</span><strong id="form-matricule">—</strong></div>
+        <div><span>Grade</span><strong id="form-grade">—</strong></div>
+        <div><span>Département</span><strong id="form-department">—</strong></div>
+      </section>
+
+      <label>Titre du rapport
+        <input id="report-title" type="text" maxlength="140" required>
+      </label>
+
+      <label>Type de rapport
+        <select id="report-type" required></select>
+      </label>
+
+      <label class="checkbox-row">
+        <input id="report-confidential" type="checkbox">
+        Rapport confidentiel
+      </label>
+
+      <label>Rapport
+        <textarea id="report-content-input" rows="14" maxlength="20000" placeholder="Écrivez votre rapport ici..." required></textarea>
+      </label>
+
+      <div class="automatic-signature">
+        <span>Signature automatique</span>
+        <strong id="form-signature">—</strong>
+      </div>
+
+      <p id="report-form-message" class="form-feedback"></p>
+
+      <div class="dialog-actions">
+        <button id="save-draft" class="secondary-action" type="button">Enregistrer en brouillon</button>
+        <button class="primary-action" type="submit">Envoyer le rapport</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/js/reports/reports.js" defer></script>
+</body>
+</html>

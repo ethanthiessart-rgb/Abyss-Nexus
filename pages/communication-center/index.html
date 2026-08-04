@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Centre de communication</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/communication-center.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div>
+        <p class="topbar-kicker">MASS COMMUNICATION CENTER</p>
+        <h1>Centre de communication</h1>
+      </div>
+      <div class="topbar-actions">
+        <button id="new-template" class="secondary-action">Nouveau modèle</button>
+        <button id="new-campaign" class="primary-action">Nouvelle communication</button>
+      </div>
+    </header>
+
+    <section class="communication-kpis">
+      <article><span>Total</span><strong id="campaign-total">0</strong></article>
+      <article><span>Envoyées</span><strong id="campaign-sent">0</strong></article>
+      <article><span>Programmées</span><strong id="campaign-scheduled">0</strong></article>
+      <article><span>Taux de lecture</span><strong id="campaign-read-rate">0%</strong></article>
+    </section>
+
+    <section id="campaign-list" class="campaign-list"></section>
+  </main>
+</div>
+
+<dialog id="campaign-dialog" class="modal">
+  <form id="campaign-form" class="modal-card">
+    <h2>Nouvelle communication</h2>
+
+    <label>Modèle
+      <select id="campaign-template">
+        <option value="">Aucun modèle</option>
+      </select>
+    </label>
+
+    <label>Titre<input id="campaign-title" required></label>
+
+    <label>Priorité
+      <select id="campaign-priority">
+        <option value="normal">Normale</option>
+        <option value="important">Importante</option>
+        <option value="urgent">Urgente</option>
+        <option value="critical">Critique</option>
+      </select>
+    </label>
+
+    <label>Audience
+      <select id="campaign-audience">
+        <option value="global">Tous les employés</option>
+        <option value="departments">Départements sélectionnés</option>
+        <option value="users">Employés sélectionnés</option>
+      </select>
+    </label>
+
+    <fieldset id="campaign-departments">
+      <legend>Départements</legend>
+    </fieldset>
+
+    <fieldset id="campaign-users">
+      <legend>Employés</legend>
+    </fieldset>
+
+    <label>Contenu
+      <textarea id="campaign-content" rows="10" required></textarea>
+    </label>
+
+    <label>Programmer pour plus tard
+      <input id="campaign-scheduled-at" type="datetime-local">
+    </label>
+
+    <div class="dialog-actions">
+      <button id="cancel-campaign" class="secondary-action" type="button">Annuler</button>
+      <button id="save-campaign-draft" class="secondary-action" type="button">Brouillon</button>
+      <button class="primary-action" type="submit">Envoyer maintenant</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="template-dialog" class="modal">
+  <form id="template-form" class="modal-card">
+    <h2>Nouveau modèle</h2>
+    <label>Nom<input id="template-name" required></label>
+    <label>Titre<input id="template-title" required></label>
+    <label>Priorité
+      <select id="template-priority">
+        <option value="normal">Normale</option>
+        <option value="important">Importante</option>
+        <option value="urgent">Urgente</option>
+        <option value="critical">Critique</option>
+      </select>
+    </label>
+    <label>Contenu<textarea id="template-content" rows="8" required></textarea></label>
+    <div class="dialog-actions">
+      <button id="cancel-template" class="secondary-action" type="button">Annuler</button>
+      <button class="primary-action">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast"></div>
+<script src="/js/communication-center/communication-center.js" defer></script>
+</body>
+</html>

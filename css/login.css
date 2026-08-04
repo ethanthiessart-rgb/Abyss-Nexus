@@ -1,0 +1,68 @@
+.boot-screen {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at center, #07121d 0, #020407 52%, #000 100%);
+  transition: opacity .7s ease, visibility .7s ease;
+  overflow: hidden;
+}
+.boot-screen::after {
+  content:""; position:absolute; inset:0; opacity:.08; pointer-events:none;
+  background: repeating-linear-gradient(0deg, transparent 0 2px, #fff 3px, transparent 4px);
+  animation: scan 5s linear infinite;
+}
+.ambient { position:absolute; width:42vw; height:42vw; filter:blur(90px); opacity:.17; border-radius:50%; }
+.ambient-blue { left:-18vw; top:-18vw; background:var(--blue); }
+.ambient-red { right:-18vw; bottom:-18vw; background:var(--red); }
+.skip-intro { position:absolute; right:24px; top:22px; z-index:2; border:1px solid var(--line); background:#08101a99; padding:10px 14px; border-radius:10px; cursor:pointer; }
+.skip-intro:hover { border-color:#6cbcff; }
+.boot-content { position:relative; z-index:1; width:min(92vw, 540px); text-align:center; }
+.logo-shell { position:relative; width:min(48vw, 280px); aspect-ratio:1; margin:0 auto 24px; }
+.boot-logo { width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 0 34px rgba(44,151,255,.23)); }
+.scan-ring { position:absolute; inset:6%; border:1px solid rgba(109,190,255,.5); border-radius:50%; box-shadow:0 0 28px rgba(47,156,255,.25); }
+.brand-block h1 { margin:.55rem 0 0; font-size:clamp(1.1rem, 3vw, 1.65rem); font-weight:500; }
+.boot-terminal { margin:28px auto 0; text-align:left; width:min(90vw, 440px); color:#b8c9d8; font-family:"Cascadia Code", Consolas, monospace; font-size:.82rem; }
+.progress-track { height:5px; margin:12px 0 8px; background:#172230; border-radius:99px; overflow:hidden; }
+.progress-value { display:block; width:0; height:100%; background:linear-gradient(90deg,var(--blue),#b4e4ff); transition:width .35s ease; box-shadow:0 0 15px var(--blue); }
+.progress-meta { display:flex; justify-content:space-between; color:#668197; font-size:.7rem; }
+
+.login-screen { min-height:100vh; position:relative; display:flex; flex-direction:column; background:radial-gradient(circle at 18% 50%, rgba(22,92,150,.18), transparent 35%), radial-gradient(circle at 86% 22%, rgba(153,28,40,.12), transparent 32%), #030507; transition:opacity .7s ease .15s, visibility .7s ease; }
+.background-grid { position:absolute; inset:0; opacity:.12; background-image:linear-gradient(rgba(105,155,196,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(105,155,196,.16) 1px,transparent 1px); background-size:42px 42px; mask-image:linear-gradient(to bottom,black,transparent 88%); }
+.login-layout { width:min(1180px, 92vw); margin:auto; padding:54px 0 30px; display:grid; grid-template-columns:1.05fr .95fr; gap:70px; align-items:center; position:relative; z-index:1; }
+.identity-panel { text-align:center; }
+.identity-logo { width:min(62vw,460px); filter:drop-shadow(0 28px 60px rgba(0,0,0,.7)); }
+.identity-panel h2 { margin:.55rem 0 0; font-weight:500; }
+.daily-quote { max-width:560px; margin:32px auto 0; color:#c6d1dc; font-size:1.05rem; line-height:1.7; }
+.daily-quote::before { content:"“"; color:var(--blue); font-size:2rem; vertical-align:-.25em; margin-right:6px; }
+.auth-card { background:linear-gradient(160deg,rgba(15,23,34,.95),rgba(6,10,15,.93)); border:1px solid var(--line); border-radius:22px; padding:28px; box-shadow:var(--shadow); backdrop-filter:blur(18px); }
+.status-line { display:flex; gap:8px; align-items:center; color:var(--muted); font-size:.8rem; padding-bottom:20px; border-bottom:1px solid var(--line); }
+.status-line strong { color:#dfeaf2; }
+.status-dot { width:9px; height:9px; border-radius:50%; box-shadow:0 0 12px currentColor; }
+.status-dot.operational { background:var(--green); color:var(--green); }
+.status-dot.degraded { background:var(--yellow); color:var(--yellow); }
+.status-dot.maintenance { background:var(--red); color:var(--red); }
+.auth-header { margin:25px 0 20px; }
+.auth-kicker { color:#63baff; font:700 .66rem/1.2 "Cascadia Code",monospace; letter-spacing:.17em; }
+.auth-header h2 { margin:8px 0; font-size:1.7rem; }
+.auth-header p { margin:0; color:var(--muted); }
+.account-switch { display:grid; grid-template-columns:1fr 1fr; padding:4px; background:#05090e; border:1px solid var(--line); border-radius:12px; margin-bottom:20px; }
+.account-option { border:0; background:transparent; padding:10px; border-radius:9px; color:var(--muted); cursor:pointer; }
+.account-option.is-active { background:#152332; color:white; box-shadow:inset 0 0 0 1px rgba(98,183,255,.26); }
+form { display:grid; gap:10px; }
+label { color:#b9c7d3; font-size:.8rem; margin-top:4px; }
+input { width:100%; border:1px solid #243343; background:#070c12; color:white; border-radius:10px; padding:12px 13px; outline:none; transition:border-color .2s, box-shadow .2s; }
+input:focus { border-color:#3a9be8; box-shadow:0 0 0 3px rgba(58,155,232,.12); }
+.password-field { position:relative; }
+.password-field input { padding-right:82px; }
+.password-toggle { position:absolute; right:8px; top:50%; transform:translateY(-50%); border:0; background:transparent; color:#75bdf3; cursor:pointer; font-size:.75rem; }
+.form-message { min-height:18px; margin:2px 0 0; color:#ff858a; font-size:.78rem; }
+.form-message.success { color:#65e5a0; }
+.primary-button { border:1px solid #348ed1; background:linear-gradient(180deg,#2075b6,#125384); padding:13px 18px; border-radius:11px; cursor:pointer; font-weight:750; letter-spacing:.02em; box-shadow:0 9px 28px rgba(23,112,177,.24); }
+.primary-button:hover { filter:brightness(1.12); }
+.auth-footer { display:flex; justify-content:space-between; gap:12px; margin-top:22px; padding-top:18px; border-top:1px solid var(--line); color:#617386; font-size:.68rem; }
+.site-footer { position:relative; z-index:1; display:flex; justify-content:space-between; gap:20px; padding:18px 4vw; color:#526273; border-top:1px solid rgba(119,154,184,.1); font-size:.7rem; }
+@media (max-width:860px) { .login-layout{grid-template-columns:1fr;gap:30px;padding-top:25px}.identity-logo{width:min(62vw,300px)}.daily-quote{margin-top:18px}.site-footer{flex-direction:column;text-align:center}.auth-card{padding:22px} }
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important; }
+  /* Le logo reste volontairement animé : c’est un élément essentiel de l’introduction. */
+  .boot-logo { animation: logoSpin 6s linear infinite !important; }
+}

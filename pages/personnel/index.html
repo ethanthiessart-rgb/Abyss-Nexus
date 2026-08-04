@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Abyss Nexus — Personnel</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/personnel.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><img src="/assets/logos/abyss-nexus-logo.png" alt="">
+      <div><strong>ABYSS NEXUS</strong><span>Staff Management System</span></div></div>
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="/dashboard">Tableau de bord</a>
+      <a class="nav-item is-active" href="/personnel">Personnel</a>
+      <a class="nav-item" href="/reports">Rapports</a>
+      <a class="nav-item" href="/mail">Messagerie</a>
+      <a class="nav-item" href="/announcements">Annonces</a>
+      <a class="nav-item" href="/documents">Documents</a>
+      <a class="nav-item" href="/discipline">Mes sanctions</a>
+    </nav>
+    <div class="sidebar-footer"><span>Core v1.0</span></div>
+  </aside>
+
+  <main class="main-panel">
+    <header class="topbar">
+      <div><p class="topbar-kicker">PERSONNEL MANAGEMENT MODULE</p><h1>Personnel</h1></div>
+      <div class="topbar-actions"><input id="search-input" class="search-input" type="search" placeholder="Rechercher">
+        <button id="open-create" class="primary-action" type="button">Créer un employé</button></div>
+    </header>
+
+    <section class="personnel-layout">
+      <article class="panel-card personnel-list-card">
+        <div id="personnel-list" class="personnel-list"></div>
+      </article>
+      <article class="panel-card detail-card">
+        <div id="detail-placeholder" class="detail-placeholder">Sélectionnez un employé.</div>
+        <div id="detail-content" hidden>
+          <div class="profile-head">
+            <img id="detail-avatar" src="/assets/logos/abyss-nexus-logo.png" alt="">
+            <div><h2 id="detail-name">—</h2><p id="detail-matricule">—</p></div>
+            <span id="detail-status" class="status-badge">—</span>
+          </div>
+          <form id="edit-form" class="stack-form">
+            <label>Grade<input id="edit-grade" required></label>
+            <label>Département<select id="edit-department"></select></label>
+            <label>Statut<select id="edit-status">
+              <option value="active">Actif</option><option value="suspended">Suspendu</option>
+              <option value="disabled">Désactivé</option><option value="archived">Archivé</option>
+            </select></label>
+            <label>Signature interne<input id="edit-signature" maxlength="160"></label>
+            <label class="checkbox-row"><input id="edit-force-password" type="checkbox"> Forcer le changement du mot de passe</label>
+            <button class="primary-action" type="submit">Enregistrer</button>
+          </form>
+          <section class="permission-section"><p class="panel-kicker">PERMISSIONS</p>
+            <div id="permission-list" class="permission-list"></div>
+            <button id="save-permissions" class="secondary-action" type="button">Enregistrer les permissions</button></section>
+          <section class="reset-section"><p class="panel-kicker">SÉCURITÉ</p>
+            <div class="inline-form"><input id="reset-password" type="password" minlength="8" placeholder="Nouveau mot de passe">
+              <button id="reset-password-button" class="danger-action" type="button">Réinitialiser</button></div></section>
+          <section class="history-section"><p class="panel-kicker">HISTORIQUE</p><div id="history-list" class="history-list"></div></section>
+        </div>
+      </article>
+    </section>
+  </main>
+</div>
+
+<dialog id="create-dialog" class="modal">
+  <form id="create-form" class="modal-card">
+    <header><div><p class="panel-kicker">NOUVEAU COMPTE</p><h2>Créer un employé</h2></div>
+      <button id="close-create" class="close-button" type="button">×</button></header>
+    <label>ID Discord<input id="create-discord-id"></label>
+    <label>Pseudo Discord<input id="create-username" required></label>
+    <label>Avatar URL<input id="create-avatar-url" type="url"></label>
+    <label>Grade libre<input id="create-grade" required></label>
+    <label>Département<select id="create-department"></select></label>
+    <label>Identifiant<input id="create-identifier" required></label>
+    <label>Mot de passe temporaire<input id="create-password" type="password" minlength="8" required></label>
+    <label>Signature interne<input id="create-signature" maxlength="160"></label>
+    <label class="checkbox-row"><input id="create-force-password" type="checkbox" checked> Forcer le changement du mot de passe</label>
+    <label class="checkbox-row"><input id="create-first-notification" type="checkbox" checked> Notification au premier accès</label>
+    <p id="create-message" class="form-feedback"></p>
+    <button class="primary-action" type="submit">Créer le compte</button>
+  </form>
+</dialog>
+<div id="toast" class="toast"></div>
+<script src="/js/personnel/personnel.js" defer></script>
+</body>
+</html>

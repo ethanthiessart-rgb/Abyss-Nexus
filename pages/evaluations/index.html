@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Évaluations</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/evaluations.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div><p class="topbar-kicker">PERFORMANCE REVIEW</p><h1>Évaluations</h1></div>
+      <button id="new-evaluation" class="primary-action" type="button">Nouvelle évaluation</button>
+    </header>
+    <section id="evaluation-list" class="card-list"></section>
+  </main>
+</div>
+
+<dialog id="evaluation-dialog" class="modal">
+  <form id="evaluation-form" class="modal-card">
+    <h2>Nouvelle évaluation</h2>
+    <label>Employé<select id="evaluation-employee" required></select></label>
+    <label>Professionnalisme<input id="score-professionalism" type="number" min="1" max="5" value="5"></label>
+    <label>Activité<input id="score-activity" type="number" min="1" max="5" value="5"></label>
+    <label>Respect<input id="score-respect" type="number" min="1" max="5" value="5"></label>
+    <label>Communication<input id="score-communication" type="number" min="1" max="5" value="5"></label>
+    <label>Commentaire<textarea id="evaluation-comment" rows="5"></textarea></label>
+    <div class="dialog-actions">
+      <button id="cancel-evaluation" class="secondary-action" type="button">Annuler</button>
+      <button class="primary-action" type="submit">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast"></div>
+<script src="/js/evaluations/evaluations.js" defer></script>
+</body>
+</html>

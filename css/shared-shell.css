@@ -1,0 +1,153 @@
+:root[data-theme="dark"] {
+  --bg: #050505;
+  --surface: #0c0c0c;
+  --surface-2: #131313;
+  --surface-3: #181818;
+  --border: #2a2a2a;
+  --accent: #a8a8a8;
+  --accent-soft: rgba(255,255,255,.08);
+}
+
+:root[data-theme="midnight"] {
+  --bg: #02030a;
+  --surface: #07091a;
+  --surface-2: #0c1027;
+  --surface-3: #121936;
+  --border: #242d54;
+  --accent: #6b7dff;
+  --accent-soft: rgba(107,125,255,.13);
+}
+
+:root[data-theme="crimson"] {
+  --bg: #090305;
+  --surface: #18070b;
+  --surface-2: #220b11;
+  --surface-3: #321019;
+  --border: #4c1f2b;
+  --accent: #ff4f6d;
+  --accent-soft: rgba(255,79,109,.13);
+}
+
+body.no-animations *,
+body.no-animations *::before,
+body.no-animations *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+body.no-glow * {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.shared-status-bar {
+  position: fixed;
+  left: 280px;
+  right: 0;
+  bottom: 0;
+  z-index: 25;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 6px 20px;
+  border-top: 1px solid rgba(255,255,255,.07);
+  background: rgba(4,8,13,.94);
+  color: var(--muted);
+  font-size: .7rem;
+  backdrop-filter: blur(14px);
+}
+
+.shared-status-bar strong {
+  color: #69e6aa;
+}
+
+.shared-clock {
+  margin-left: auto;
+  color: #d9e6ef;
+}
+
+.global-nav-lock {
+  margin-top: 8px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  padding: 11px 14px;
+  background: transparent;
+  color: #b8c4cf;
+  text-align: left;
+  cursor: pointer;
+}
+
+@media (max-width:760px) {
+  .shared-status-bar {
+    left: 0;
+  }
+}
+
+.session-lock-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background:
+    radial-gradient(circle at 50% 25%, rgba(45,150,230,.16), transparent 28rem),
+    rgba(2,4,8,.97);
+  backdrop-filter: blur(22px);
+}
+
+.session-lock-overlay[hidden] {
+  display: none;
+}
+
+.session-lock-card {
+  width: min(440px,100%);
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: rgba(8,16,25,.96);
+  text-align: center;
+  box-shadow: 0 24px 80px rgba(0,0,0,.5);
+}
+
+.session-lock-logo {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  animation: anx-lock-spin 7s linear infinite;
+}
+
+.session-lock-card h2 {
+  margin: 20px 0 5px;
+  letter-spacing: .14em;
+}
+
+.session-lock-card p {
+  color: var(--muted);
+}
+
+.session-lock-card input {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #07101a;
+  color: white;
+}
+
+.session-lock-card button {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.session-lock-error {
+  min-height: 20px;
+  color: #ff91a1 !important;
+}
+
+@keyframes anx-lock-spin {
+  to { transform: rotate(360deg); }
+}

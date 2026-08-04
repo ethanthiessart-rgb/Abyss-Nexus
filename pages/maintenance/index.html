@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Maintenance</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/maintenance.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div>
+        <p class="topbar-kicker">MAINTENANCE CONTROL CENTER</p>
+        <h1>Centre de maintenance</h1>
+      </div>
+      <span id="maintenance-badge" class="maintenance-badge">—</span>
+    </header>
+
+    <form id="maintenance-form" class="maintenance-grid">
+      <article class="panel-card">
+        <p class="panel-kicker">ÉTAT DU PORTAIL</p>
+        <div class="mode-grid">
+          <label><input type="radio" name="mode" value="operational"><span>🟢 Opérationnel</span></label>
+          <label><input type="radio" name="mode" value="minor_bug"><span>🟡 Bug mineur</span></label>
+          <label><input type="radio" name="mode" value="maintenance"><span>🔴 Maintenance</span></label>
+          <label><input type="radio" name="mode" value="offline"><span>⚫ Hors ligne</span></label>
+        </div>
+      </article>
+
+      <article class="panel-card">
+        <p class="panel-kicker">MESSAGE OFFICIEL</p>
+        <textarea id="maintenance-message" rows="7"
+                  placeholder="Message affiché aux utilisateurs"></textarea>
+      </article>
+
+      <article class="panel-card">
+        <p class="panel-kicker">RETOUR</p>
+        <label class="checkbox-row">
+          <input id="return-unknown" type="checkbox">
+          Retour inconnu
+        </label>
+        <label>Date et heure estimées
+          <input id="return-at" type="datetime-local">
+        </label>
+      </article>
+
+      <article class="panel-card">
+        <p class="panel-kicker">DÉPARTEMENTS AUTORISÉS</p>
+        <div id="allowed-departments" class="department-checks"></div>
+      </article>
+
+      <button class="primary-action maintenance-submit" type="submit">
+        Enregistrer l’état du portail
+      </button>
+    </form>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="/js/maintenance/maintenance.js" defer></script>
+</body>
+</html>

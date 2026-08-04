@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Statistiques</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/statistics.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div>
+        <p class="topbar-kicker">ANALYTICS MODULE</p>
+        <h1>Statistiques</h1>
+      </div>
+      <button id="refresh-statistics" class="primary-action" type="button">
+        Actualiser
+      </button>
+    </header>
+
+    <section class="statistics-cards">
+      <article><span>Personnel</span><strong id="users-total">0</strong><small id="users-detail">—</small></article>
+      <article><span>Rapports</span><strong id="reports-total">0</strong><small id="reports-detail">—</small></article>
+      <article><span>Sanctions</span><strong id="sanctions-total">0</strong><small id="sanctions-detail">—</small></article>
+      <article><span>Documents</span><strong id="documents-total">0</strong><small id="documents-detail">—</small></article>
+      <article><span>Annonces</span><strong id="announcements-total">0</strong><small id="announcements-detail">—</small></article>
+    </section>
+
+    <section class="statistics-grid">
+      <article class="panel-card">
+        <p class="panel-kicker">DÉPARTEMENTS</p>
+        <div id="department-bars" class="department-bars"></div>
+      </article>
+
+      <article class="panel-card">
+        <p class="panel-kicker">ACTIVITÉ RÉCENTE</p>
+        <div id="recent-activity" class="recent-activity"></div>
+      </article>
+    </section>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="/js/statistics/statistics.js" defer></script>
+</body>
+</html>

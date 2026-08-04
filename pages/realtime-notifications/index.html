@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Notifications en direct</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/realtime-notifications.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div><p class="topbar-kicker">REALTIME NOTIFICATION CENTER</p><h1>Notifications en direct</h1></div>
+      <button id="read-all" class="primary-action">Tout marquer comme lu</button>
+    </header>
+
+    <section class="notification-toolbar">
+      <select id="notification-category">
+        <option value="">Toutes les catégories</option>
+        <option value="chat">Chat</option>
+        <option value="mail">Messagerie</option>
+        <option value="report">Rapports</option>
+        <option value="leave">Congés</option>
+        <option value="sanction">Sanctions</option>
+        <option value="training">Formations</option>
+      </select>
+      <span id="live-status">Connexion...</span>
+      <strong id="unread-count">0 non lue(s)</strong>
+    </section>
+
+    <section id="notification-list" class="notification-list"></section>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="/js/realtime-notifications/realtime-notifications.js" defer></script>
+</body>
+</html>

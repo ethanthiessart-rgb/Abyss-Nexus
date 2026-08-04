@@ -1,0 +1,91 @@
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 18px;
+  padding-bottom: 45px;
+}
+
+.profile-summary {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.profile-summary img {
+  width: 88px;
+  height: 88px;
+  border-radius: 20px;
+  object-fit: cover;
+}
+
+.profile-summary h2,
+.profile-summary p {
+  margin: 0;
+}
+
+.profile-summary p {
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.settings-form {
+  display: grid;
+  gap: 14px;
+}
+
+.settings-form label {
+  display: grid;
+  gap: 7px;
+}
+
+.settings-form input,
+.settings-form select {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #07101a;
+  color: white;
+}
+
+.switch-row {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+}
+
+.switch-row input {
+  width: auto;
+}
+
+.primary-action,
+.secondary-action,
+.danger-action {
+  padding: 11px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: white;
+}
+
+.primary-action {
+  border: 1px solid #2e9ce9;
+  background: linear-gradient(180deg,#228ed5,#176ea8);
+}
+
+.secondary-action {
+  border: 1px solid var(--border);
+  background: #101c29;
+}
+
+.danger-action {
+  border: 1px solid rgba(255,90,111,.45);
+  background: rgba(255,90,111,.1);
+  color: #ff9bab;
+}
+
+@media (max-width:900px) {
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+}

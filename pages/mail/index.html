@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Abyss Nexus — Messagerie</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/mail.css">
+</head>
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <img src="/assets/logos/abyss-nexus-logo.png" alt="Logo Abyss Nexus">
+        <div><strong>ABYSS NEXUS</strong><span>Staff Management System</span></div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-item" href="/dashboard">Tableau de bord</a>
+        <a id="personnel-link" class="nav-item" href="/personnel">Personnel</a>
+        <a class="nav-item" href="/reports">Rapports</a>
+        <a class="nav-item is-active" href="/mail">Messagerie</a>
+        <button class="nav-item" type="button" disabled>Annonces</button>
+        <button class="nav-item" type="button" disabled>Documents</button>
+        <button class="nav-item" type="button" disabled>Mes sanctions</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span>Core v1.0</span>
+        <button id="logout-button" class="logout-button" type="button">Se déconnecter</button>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div>
+          <p class="topbar-kicker">INTERNAL COMMUNICATION MODULE</p>
+          <h1>Messagerie</h1>
+        </div>
+        <div class="topbar-actions">
+          <input id="mail-search" class="mail-search" type="search" placeholder="Rechercher un message">
+          <button id="compose-button" class="primary-action" type="button">Nouveau message</button>
+        </div>
+      </header>
+
+      <section class="mail-layout">
+        <article class="panel-card mail-list-panel">
+          <div class="mail-tabs">
+            <button class="mail-tab is-active" type="button" data-box="inbox">Boîte de réception</button>
+            <button class="mail-tab" type="button" data-box="sent">Messages envoyés</button>
+          </div>
+          <div id="mail-list" class="mail-list"></div>
+          <p id="mail-empty" class="empty-state" hidden>Aucun message.</p>
+        </article>
+
+        <article class="panel-card mail-detail-panel">
+          <div id="mail-placeholder" class="detail-placeholder">
+            Sélectionnez un message pour le consulter.
+          </div>
+
+          <div id="mail-detail" hidden>
+            <header class="mail-detail-header">
+              <div>
+                <p id="detail-priority" class="panel-kicker">NORMAL</p>
+                <h2 id="detail-subject">Sujet</h2>
+                <p id="detail-date" class="detail-meta"></p>
+              </div>
+              <span id="detail-confidential" class="confidential-badge" hidden>Confidentiel</span>
+            </header>
+
+            <div class="sender-card">
+              <img id="detail-avatar" src="/assets/logos/abyss-nexus-logo.png" alt="">
+              <div>
+                <strong id="detail-sender">—</strong>
+                <span id="detail-sender-info">—</span>
+              </div>
+            </div>
+
+            <div id="detail-body" class="mail-body"></div>
+
+            <section class="recipient-section">
+              <p class="panel-kicker">DESTINATAIRES</p>
+              <div id="detail-recipients" class="recipient-list"></div>
+            </section>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="compose-dialog" class="modal">
+    <form id="compose-form" class="modal-card">
+      <header>
+        <div>
+          <p class="panel-kicker">NOUVEAU MESSAGE</p>
+          <h2>Rédiger un message</h2>
+        </div>
+        <button id="close-compose" class="close-button" type="button">×</button>
+      </header>
+
+      <label>Destinataire
+        <select id="recipient-type">
+          <option value="users">Un ou plusieurs employés</option>
+          <option value="department">Un département</option>
+          <option id="global-option" value="global">Tout le personnel</option>
+        </select>
+      </label>
+
+      <label id="users-field">Employés
+        <select id="recipient-users" multiple size="7"></select>
+      </label>
+
+      <label id="department-field" hidden>Département
+        <select id="recipient-department"></select>
+      </label>
+
+      <label>Priorité
+        <select id="message-priority">
+          <option value="normal">Normale</option>
+          <option value="important">Importante</option>
+          <option value="urgent">Urgente</option>
+          <option value="direction">Direction</option>
+        </select>
+      </label>
+
+      <label>Sujet
+        <input id="message-subject" type="text" maxlength="140" required>
+      </label>
+
+      <label>Message
+        <textarea id="message-body" rows="12" maxlength="20000" required></textarea>
+      </label>
+
+      <label class="checkbox-row">
+        <input id="message-confidential" type="checkbox">
+        Message confidentiel
+      </label>
+
+      <p id="compose-message" class="form-feedback"></p>
+      <button class="primary-action" type="submit">Envoyer le message</button>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/js/mail/mail.js" defer></script>
+</body>
+</html>

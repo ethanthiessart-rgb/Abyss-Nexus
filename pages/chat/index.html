@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Chat interne</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/chat.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel chat-page">
+    <header class="topbar">
+      <div><p class="topbar-kicker">INTERNAL CHAT</p><h1>Chat interne</h1></div>
+      <button id="new-conversation" class="primary-action">Nouvelle conversation</button>
+    </header>
+
+    <section class="chat-layout">
+      <aside class="panel-card conversation-panel">
+        <input id="conversation-search" type="search" placeholder="Rechercher">
+        <div id="conversation-list"></div>
+      </aside>
+
+      <article class="panel-card message-panel">
+        <header id="conversation-header">Sélectionnez une conversation</header>
+        <div id="message-list" class="message-list"></div>
+        <form id="message-form" class="message-form">
+          <input id="message-body" placeholder="Écrire un message">
+          <input id="message-attachment" placeholder="URL de pièce jointe">
+          <button class="primary-action">Envoyer</button>
+        </form>
+      </article>
+    </section>
+  </main>
+</div>
+
+<dialog id="conversation-dialog" class="modal">
+  <form id="conversation-form" class="modal-card">
+    <h2>Nouvelle conversation</h2>
+    <label>Type
+      <select id="conversation-type">
+        <option value="private">Privée</option>
+        <option value="group">Groupe</option>
+        <option value="department">Département</option>
+      </select>
+    </label>
+    <label>Nom<input id="conversation-name"></label>
+    <label>Département<select id="conversation-department"></select></label>
+    <fieldset id="conversation-members"><legend>Membres</legend></fieldset>
+    <div class="dialog-actions">
+      <button id="cancel-conversation" class="secondary-action" type="button">Annuler</button>
+      <button class="primary-action">Créer</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast"></div>
+<script src="/js/chat/chat.js" defer></script>
+</body>
+</html>

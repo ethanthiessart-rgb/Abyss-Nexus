@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Abyss Nexus — Discipline</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/discipline.css">
+</head>
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <img src="/assets/logos/abyss-nexus-logo.png" alt="Logo Abyss Nexus">
+        <div><strong>ABYSS NEXUS</strong><span>Staff Management System</span></div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-item" href="/dashboard">Tableau de bord</a>
+        <a id="personnel-link" class="nav-item" href="/personnel">Personnel</a>
+        <a class="nav-item" href="/reports">Rapports</a>
+        <a class="nav-item" href="/mail">Messagerie</a>
+        <button class="nav-item" type="button" disabled>Annonces</button>
+        <button class="nav-item" type="button" disabled>Documents</button>
+        <a class="nav-item is-active" href="/discipline">Mes sanctions</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span>Core v1.0</span>
+        <button id="logout-button" class="logout-button" type="button">Se déconnecter</button>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div>
+          <p class="topbar-kicker">DISCIPLINARY MANAGEMENT MODULE</p>
+          <h1>Centre disciplinaire</h1>
+        </div>
+        <div class="topbar-actions">
+          <input id="discipline-search" class="discipline-search" type="search" placeholder="Rechercher un membre">
+          <button id="new-sanction-button" class="primary-action" type="button" hidden>Ajouter une sanction</button>
+        </div>
+      </header>
+
+      <section class="discipline-layout">
+        <article id="people-panel" class="panel-card people-panel" hidden>
+          <div id="people-list" class="people-list"></div>
+        </article>
+
+        <article class="panel-card dossier-panel">
+          <div id="dossier-placeholder" class="detail-placeholder">
+            Chargement du dossier disciplinaire...
+          </div>
+
+          <div id="dossier-content" hidden>
+            <header class="dossier-header">
+              <div class="profile-block">
+                <img id="dossier-avatar" src="/assets/logos/abyss-nexus-logo.png" alt="">
+                <div>
+                  <h2 id="dossier-name">—</h2>
+                  <p id="dossier-info">—</p>
+                </div>
+              </div>
+              <span id="surveillance-level" class="surveillance-badge">Normal</span>
+            </header>
+
+            <section class="trust-card">
+              <div>
+                <span>Indice de confiance</span>
+                <strong id="trust-value">100 %</strong>
+              </div>
+              <div class="trust-track">
+                <span id="trust-bar" class="trust-bar"></span>
+              </div>
+            </section>
+
+            <section class="sanction-summary">
+              <article><span>Total</span><strong id="sanction-total">0</strong></article>
+              <article><span>Actives</span><strong id="sanction-active">0</strong></article>
+              <article><span>Dernière sanction</span><strong id="last-sanction">Aucune</strong></article>
+            </section>
+
+            <section>
+              <div class="section-title-row">
+                <div>
+                  <p class="panel-kicker">HISTORIQUE</p>
+                  <h3>Dossier disciplinaire</h3>
+                </div>
+              </div>
+              <div id="sanctions-list" class="sanctions-list"></div>
+              <p id="sanctions-empty" class="empty-state" hidden>Aucune sanction enregistrée.</p>
+            </section>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="sanction-dialog" class="modal">
+    <form id="sanction-form" class="modal-card">
+      <header>
+        <div>
+          <p class="panel-kicker">NOUVELLE SANCTION</p>
+          <h2>Appliquer une sanction</h2>
+        </div>
+        <button id="close-sanction-dialog" class="close-button" type="button">×</button>
+      </header>
+
+      <label>Employé
+        <select id="sanction-target" required></select>
+      </label>
+
+      <label>Sanction
+        <select id="sanction-type" required></select>
+      </label>
+
+      <label>Motif
+        <textarea id="sanction-reason" rows="5" maxlength="1000" required></textarea>
+      </label>
+
+      <label>Commentaire interne
+        <textarea id="sanction-comment" rows="4" maxlength="2000"></textarea>
+      </label>
+
+      <label>Durée
+        <select id="sanction-duration">
+          <option value="permanent">Permanent</option>
+          <option value="3d">3 jours</option>
+          <option value="7d">7 jours</option>
+          <option value="14d">14 jours</option>
+          <option value="30d">30 jours</option>
+          <option value="custom">Personnalisée</option>
+        </select>
+      </label>
+
+      <label id="custom-days-field" hidden>Nombre de jours
+        <input id="custom-days" type="number" min="1" max="3650">
+      </label>
+
+      <p id="sanction-message" class="form-feedback"></p>
+      <button class="primary-action" type="submit">Appliquer la sanction</button>
+    </form>
+  </dialog>
+
+  <dialog id="cancel-dialog" class="modal">
+    <form id="cancel-form" class="modal-card compact">
+      <header>
+        <div>
+          <p class="panel-kicker">ANNULATION</p>
+          <h2>Annuler la sanction</h2>
+        </div>
+        <button id="close-cancel-dialog" class="close-button" type="button">×</button>
+      </header>
+      <label>Motif de l’annulation
+        <textarea id="cancel-reason" rows="5" required></textarea>
+      </label>
+      <p id="cancel-message" class="form-feedback"></p>
+      <button class="danger-action" type="submit">Confirmer l’annulation</button>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/js/discipline/discipline.js" defer></script>
+</body>
+</html>

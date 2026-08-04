@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070b">
+  <meta name="description" content="Abyss Nexus - Staff Management System">
+  <title>Abyss Nexus — Staff Management System</title>
+  <link rel="stylesheet" href="css/core.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+  <noscript>JavaScript doit être activé pour utiliser Abyss Nexus.</noscript>
+
+  <section id="boot-screen" class="boot-screen" aria-label="Initialisation d'Abyss Nexus">
+    <div class="ambient ambient-blue"></div>
+    <div class="ambient ambient-red"></div>
+    <button id="skip-intro" class="skip-intro" type="button">Passer l’introduction</button>
+
+    <div class="boot-content">
+      <div class="logo-shell" aria-hidden="true">
+        <img class="boot-logo" src="assets/logos/abyss-nexus-logo.png" alt="">
+        <span class="scan-ring"></span>
+      </div>
+
+      <div class="brand-block">
+        <p class="eyebrow">ABYSS NEXUS</p>
+        <h1>Staff Management System</h1>
+        <p class="version">Core v1.0</p>
+      </div>
+
+      <div class="boot-terminal" aria-live="polite">
+        <div id="boot-message">Initialisation du noyau...</div>
+        <div class="progress-track" aria-hidden="true">
+          <span id="boot-progress" class="progress-value"></span>
+        </div>
+        <div class="progress-meta">
+          <span id="boot-step">CORE_INIT</span>
+          <span id="boot-percent">0%</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main id="login-screen" class="login-screen is-hidden" aria-hidden="true">
+    <div class="background-grid"></div>
+    <div class="login-layout">
+      <section class="identity-panel">
+        <img class="identity-logo" src="assets/logos/abyss-nexus-logo.png" alt="Logo Site Abyss">
+        <div>
+          <p class="eyebrow">ABYSS NEXUS</p>
+          <h2>Staff Management System</h2>
+          <p class="version">Core v1.0</p>
+        </div>
+        <blockquote id="daily-quote" class="daily-quote"></blockquote>
+      </section>
+
+      <section class="auth-card" aria-labelledby="login-title">
+        <div class="status-line">
+          <span id="status-dot" class="status-dot operational"></span>
+          <span>État du portail :</span>
+          <strong id="status-label">Opérationnel</strong>
+        </div>
+
+        <header class="auth-header">
+          <p class="auth-kicker">AUTHENTICATION MODULE</p>
+          <h2 id="login-title">Connexion sécurisée</h2>
+          <p>Utilisez les accès fournis par la Direction.</p>
+        </header>
+
+        <div class="account-switch" role="group" aria-label="Type de connexion">
+          <button class="account-option is-active" type="button" data-account="personnel">Personnel</button>
+          <button class="account-option" type="button" data-account="direction">Direction</button>
+        </div>
+
+        <form id="login-form" novalidate>
+          <input id="account-type" name="accountType" type="hidden" value="personnel">
+
+          <label for="matricule">Matricule staff</label>
+          <input id="matricule" name="matricule" type="text" autocomplete="username" placeholder="ABY-000001" maxlength="24" required>
+
+          <label for="identifier">Identifiant</label>
+          <input id="identifier" name="identifier" type="text" autocomplete="username" placeholder="Votre identifiant" maxlength="64" required>
+
+          <label for="password">Mot de passe</label>
+          <div class="password-field">
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Votre mot de passe" minlength="8" maxlength="128" required>
+            <button id="toggle-password" class="password-toggle" type="button" aria-label="Afficher le mot de passe">Afficher</button>
+          </div>
+
+          <p id="form-message" class="form-message" role="alert"></p>
+          <button class="primary-button" type="submit">Accéder à Abyss Nexus</button>
+        </form>
+
+        <footer class="auth-footer">
+          <span>SECURE • CONTAIN • PROTECT</span>
+          <span>Connexion chiffrée</span>
+        </footer>
+      </section>
+    </div>
+
+    <footer class="site-footer">
+      <span>ABYSS NEXUS — Staff Management System — Core v1.0</span>
+      <span>© 2026 Abyss. Tous droits réservés.</span>
+    </footer>
+  </main>
+
+  <script src="js/utils/quotes.js" defer></script>
+  <script src="js/core/boot.js" defer></script>
+  <script src="js/auth/login.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Statistiques avancées</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/analytics-center.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div>
+        <p class="topbar-kicker">ADVANCED ANALYTICS</p>
+        <h1>Centre de statistiques</h1>
+      </div>
+      <div class="topbar-actions">
+        <select id="analytics-period">
+          <option value="7">7 jours</option>
+          <option value="30" selected>30 jours</option>
+          <option value="90">90 jours</option>
+          <option value="365">1 an</option>
+        </select>
+        <a class="primary-action" href="/api/analytics-center/export.csv">Exporter CSV</a>
+      </div>
+    </header>
+
+    <section id="analytics-kpis" class="analytics-kpis"></section>
+
+    <section class="analytics-grid">
+      <article class="panel-card">
+        <p class="panel-kicker">EFFECTIFS PAR DÉPARTEMENT</p>
+        <div id="department-bars" class="bars"></div>
+      </article>
+      <article class="panel-card">
+        <p class="panel-kicker">RAPPORTS PAR DÉPARTEMENT</p>
+        <div id="report-bars" class="bars"></div>
+      </article>
+      <article class="panel-card">
+        <p class="panel-kicker">SANCTIONS PAR TYPE</p>
+        <div id="sanction-bars" class="bars"></div>
+      </article>
+      <article class="panel-card">
+        <p class="panel-kicker">EMPLOYÉS LES PLUS ACTIFS</p>
+        <div id="top-employees" class="ranking"></div>
+      </article>
+      <article class="panel-card analytics-wide">
+        <p class="panel-kicker">ACTIVITÉ QUOTIDIENNE</p>
+        <div id="daily-chart" class="daily-chart"></div>
+      </article>
+    </section>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="/js/analytics-center/analytics-center.js" defer></script>
+</body>
+</html>

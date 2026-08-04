@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Paramètres</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/settings.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+
+  <main class="main-panel">
+    <header class="topbar">
+      <div>
+        <p class="topbar-kicker">ACCOUNT CONTROL MODULE</p>
+        <h1>Paramètres</h1>
+      </div>
+    </header>
+
+    <section class="settings-grid">
+      <article class="panel-card">
+        <p class="panel-kicker">PROFIL</p>
+        <div class="profile-summary">
+          <img id="settings-avatar"
+               src="/assets/logos/abyss-nexus-logo.png" alt="">
+          <div>
+            <h2 id="settings-name">—</h2>
+            <p id="settings-meta">—</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel-card">
+        <p class="panel-kicker">PRÉFÉRENCES</p>
+        <form id="preferences-form" class="settings-form">
+          <label>Thème
+            <select id="theme">
+              <option value="abyss-blue">Abyss Blue</option>
+              <option value="dark">Dark</option>
+              <option value="midnight">Midnight</option>
+              <option value="crimson">Crimson</option>
+            </select>
+          </label>
+
+          <label class="switch-row">
+            <input id="animations" type="checkbox">
+            Activer les animations
+          </label>
+
+          <label class="switch-row">
+            <input id="sounds" type="checkbox">
+            Activer les sons
+          </label>
+
+          <label class="switch-row">
+            <input id="glow" type="checkbox">
+            Activer les effets lumineux
+          </label>
+
+          <label class="switch-row">
+            <input id="desktop-notifications" type="checkbox">
+            Notifications du navigateur
+          </label>
+
+          <label>Verrouillage automatique
+            <select id="auto-lock">
+              <option value="5">5 minutes</option>
+              <option value="10">10 minutes</option>
+              <option value="15">15 minutes</option>
+              <option value="30">30 minutes</option>
+              <option value="60">1 heure</option>
+              <option value="120">2 heures</option>
+            </select>
+          </label>
+
+          <button class="primary-action" type="submit">
+            Enregistrer les préférences
+          </button>
+        </form>
+      </article>
+
+      <article class="panel-card">
+        <p class="panel-kicker">SÉCURITÉ</p>
+        <form id="password-form" class="settings-form">
+          <label>Mot de passe actuel
+            <input id="current-password" type="password" required>
+          </label>
+          <label>Nouveau mot de passe
+            <input id="new-password" type="password" minlength="8" required>
+          </label>
+          <label>Confirmation
+            <input id="confirm-password" type="password" minlength="8" required>
+          </label>
+          <button class="danger-action" type="submit">
+            Modifier le mot de passe
+          </button>
+        </form>
+      </article>
+
+      <article class="panel-card">
+        <p class="panel-kicker">SESSION</p>
+        <button id="lock-now" class="secondary-action" type="button">
+          🔒 Verrouiller maintenant
+        </button>
+      </article>
+    </section>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="/js/settings/settings.js" defer></script>
+</body>
+</html>

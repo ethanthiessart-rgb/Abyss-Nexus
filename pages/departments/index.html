@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Départements</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/departments.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div>
+        <p class="topbar-kicker">DEPARTMENT MANAGEMENT CENTER</p>
+        <h1>Départements</h1>
+      </div>
+      <button id="create-department" class="primary-action" type="button">
+        Nouveau département
+      </button>
+    </header>
+
+    <section class="departments-layout">
+      <article class="panel-card department-list-panel">
+        <input id="department-search" class="search-input"
+               type="search" placeholder="Rechercher">
+        <div id="department-list" class="department-list"></div>
+      </article>
+
+      <article class="panel-card department-detail-panel">
+        <div id="department-placeholder" class="detail-placeholder">
+          Sélectionnez un département.
+        </div>
+
+        <div id="department-content" hidden>
+          <form id="department-form" class="department-form">
+            <label>Nom
+              <input id="department-name" required maxlength="80">
+            </label>
+            <div class="inline-fields">
+              <label>Couleur
+                <input id="department-color" type="color">
+              </label>
+              <label>Icône
+                <input id="department-icon" maxlength="8">
+              </label>
+            </div>
+            <label>Description
+              <textarea id="department-description" rows="5"></textarea>
+            </label>
+            <label class="checkbox-row">
+              <input id="department-active" type="checkbox">
+              Département actif
+            </label>
+
+            <p class="panel-kicker">PERMISSIONS AUTOMATIQUES</p>
+            <div id="department-permissions" class="permission-grid"></div>
+
+            <div class="form-actions">
+              <button class="primary-action" type="submit">
+                Enregistrer
+              </button>
+              <button id="delete-department"
+                      class="danger-action"
+                      type="button">
+                Supprimer
+              </button>
+            </div>
+          </form>
+
+          <section class="members-section">
+            <p class="panel-kicker">EMPLOYÉS</p>
+            <div id="department-members" class="member-list"></div>
+          </section>
+        </div>
+      </article>
+    </section>
+  </main>
+</div>
+
+<dialog id="create-dialog" class="modal">
+  <form id="create-form" class="modal-card">
+    <h2>Nouveau département</h2>
+    <label>Nom
+      <input id="create-name" required maxlength="80">
+    </label>
+    <label>Couleur
+      <input id="create-color" type="color" value="#3aa9ff">
+    </label>
+    <label>Icône
+      <input id="create-icon" value="🏢" maxlength="8">
+    </label>
+    <label>Description
+      <textarea id="create-description" rows="4"></textarea>
+    </label>
+    <p id="create-message" class="form-feedback"></p>
+    <div class="dialog-actions">
+      <button id="cancel-create" class="secondary-action" type="button">
+        Annuler
+      </button>
+      <button class="primary-action" type="submit">
+        Créer
+      </button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast"></div>
+<script src="/js/departments/departments.js" defer></script>
+</body>
+</html>

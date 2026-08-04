@@ -1,0 +1,8 @@
+'use strict';
+(() => {
+  const $=s=>document.querySelector(s),toast=$('#toast'),dialog=$('#career-dialog');
+  const show=m=>{toast.textContent=m;toast.classList.add('is-visible');setTimeout(()=>toast.classList.remove('is-visible'),2200)};
+  async function api(url,opt={}){const r=await fetch(url,{headers:{'Content-Type':'application/json',Accept:'application/json',...(opt.headers||{})},...opt});const d=await r.json();if(!r.ok)throw new Error(d.message||'Erreur');return d}
+  async function load(){const [c,u]=await Promise.all([api('/api/career'),api('/api/employees')]);$('#career-list').innerHTML=c.events.map(x=>`<article class="timeline-item"><strong>${x.employeeName} — ${x.title}</strong><p>${x.description||''}</p><span>${x.eventType} · ${x.eventDate} · ${x.actorName}</span></article>`).join('');$('#career-employee').innerHTML=u.employees.map(x=>`<option value="${x.id}">${x.username} — ${x.matricule}</option>`).join('')}
+  $('#new-career-event').onclick=()=>dialog.showModal();$('#cancel-career').onclick=()=>dialog.close();$('#career-form').onsubmit=async e=>{e.preventDefault();try{const d=await api('/api/career',{method:'POST',body:JSON.stringify({employeeUserId:Number($('#career-employee').value),eventType:$('#career-type').value,title:$('#career-title').value.trim(),description:$('#career-description').value.trim(),eventDate:$('#career-date').value?new Date($('#career-date').value).toISOString():null})});dialog.close();e.target.reset();show(d.message);load()}catch(err){show(err.message)}};load().catch(e=>show(e.message));
+})();

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Abyss Nexus — Documents</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/documents.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="/assets/logos/abyss-nexus-logo.png" alt="">
+      <div><strong>ABYSS NEXUS</strong><span>Staff Management System</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="/dashboard">Tableau de bord</a>
+      <a class="nav-item" href="/personnel">Personnel</a>
+      <a class="nav-item" href="/reports">Rapports</a>
+      <a class="nav-item" href="/mail">Messagerie</a>
+      <a class="nav-item" href="/announcements">Annonces</a>
+      <a class="nav-item is-active" href="/documents">Documents</a>
+      <a class="nav-item" href="/discipline">Mes sanctions</a>
+    </nav>
+    <div class="sidebar-footer"><span>Core v1.0</span></div>
+  </aside>
+
+  <main class="main-panel">
+    <header class="topbar">
+      <div><p class="topbar-kicker">DOCUMENT REPOSITORY MODULE</p><h1>Documents</h1></div>
+      <div class="topbar-actions">
+        <input id="document-search" class="search-input" type="search" placeholder="Rechercher">
+        <button id="upload-document" class="primary-action" type="button" hidden>Importer</button>
+      </div>
+    </header>
+    <section id="document-list" class="document-grid"></section>
+    <p id="document-empty" class="empty-state" hidden>Aucun document visible.</p>
+  </main>
+</div>
+
+<dialog id="document-dialog" class="modal">
+  <form id="document-form" class="modal-card" enctype="multipart/form-data">
+    <header><div><p class="panel-kicker">IMPORT</p><h2>Ajouter un document</h2></div>
+      <button id="close-document" class="close-button" type="button">×</button>
+    </header>
+    <label>Fichier<input id="document-file" type="file" required></label>
+    <label>Titre<input id="document-title" maxlength="140" required></label>
+    <label>Description<textarea id="document-description" rows="5"></textarea></label>
+    <label>Dossier<input id="document-folder" value="Commun" maxlength="80"></label>
+    <label class="checkbox-row"><input id="document-global" type="checkbox"> Visible par tout le personnel</label>
+    <fieldset id="document-departments"><legend>Départements autorisés</legend></fieldset>
+    <p id="document-message" class="form-feedback"></p>
+    <button class="primary-action" type="submit">Importer le document</button>
+  </form>
+</dialog>
+<div id="toast" class="toast"></div>
+<script src="/js/documents/documents.js" defer></script>
+</body>
+</html>

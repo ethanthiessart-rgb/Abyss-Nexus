@@ -1,0 +1,8 @@
+'use strict';
+(() => {
+  const $=s=>document.querySelector(s),toast=$('#toast'),dialog=$('#evaluation-dialog');
+  const show=m=>{toast.textContent=m;toast.classList.add('is-visible');setTimeout(()=>toast.classList.remove('is-visible'),2200)};
+  async function api(url,opt={}){const r=await fetch(url,{headers:{'Content-Type':'application/json',Accept:'application/json',...(opt.headers||{})},...opt});const d=await r.json();if(!r.ok)throw new Error(d.message||'Erreur');return d}
+  async function load(){const [e,u]=await Promise.all([api('/api/evaluations'),api('/api/employees')]);$('#evaluation-list').innerHTML=e.evaluations.map(x=>`<article class="data-card"><strong>${x.employeeName} — ${Number(x.overallScore).toFixed(2)}/5</strong><p>${x.comment||'Sans commentaire'}</p><small>${x.evaluatorName} · ${x.createdAt}</small></article>`).join('');$('#evaluation-employee').innerHTML=u.employees.map(x=>`<option value="${x.id}">${x.username} — ${x.matricule}</option>`).join('')}
+  $('#new-evaluation').onclick=()=>dialog.showModal();$('#cancel-evaluation').onclick=()=>dialog.close();$('#evaluation-form').onsubmit=async e=>{e.preventDefault();try{const d=await api('/api/evaluations',{method:'POST',body:JSON.stringify({employeeUserId:Number($('#evaluation-employee').value),professionalism:Number($('#score-professionalism').value),activity:Number($('#score-activity').value),respect:Number($('#score-respect').value),communication:Number($('#score-communication').value),comment:$('#evaluation-comment').value.trim()})});dialog.close();e.target.reset();show(d.message);load()}catch(err){show(err.message)}};load().catch(e=>show(e.message));
+})();

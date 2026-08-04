@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Archives</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/archives.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div>
+        <p class="topbar-kicker">ARCHIVE CENTER</p>
+        <h1>Centre d’archives</h1>
+      </div>
+      <div class="topbar-actions">
+        <input id="archive-search" class="search-input"
+               type="search" placeholder="Rechercher">
+        <select id="archive-filter" class="search-input">
+          <option value="all">Toutes les archives</option>
+          <option value="announcements">Annonces</option>
+          <option value="documents">Documents</option>
+          <option value="reports">Rapports</option>
+          <option value="sanctions">Sanctions</option>
+          <option value="personnel">Personnel</option>
+        </select>
+      </div>
+    </header>
+
+    <section id="archive-list" class="archive-list"></section>
+    <p id="archive-empty" class="empty-state" hidden>
+      Aucune archive trouvée.
+    </p>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="/js/archives/archives.js" defer></script>
+</body>
+</html>

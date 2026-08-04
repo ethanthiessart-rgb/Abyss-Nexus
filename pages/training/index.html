@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Formations</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/training.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div><p class="topbar-kicker">TRAINING CENTER</p><h1>Formations</h1></div>
+      <div class="topbar-actions">
+        <button id="new-training" class="primary-action" type="button">Créer une formation</button>
+        <button id="assign-training" class="secondary-action" type="button">Attribuer</button>
+      </div>
+    </header>
+
+    <section class="training-grid">
+      <article class="panel-card"><p class="panel-kicker">CATALOGUE</p><div id="training-list" class="card-list"></div></article>
+      <article class="panel-card"><p class="panel-kicker">ATTRIBUTIONS</p><div id="assignment-list" class="card-list"></div></article>
+    </section>
+  </main>
+</div>
+
+<dialog id="training-dialog" class="modal">
+  <form id="training-form" class="modal-card">
+    <h2>Nouvelle formation</h2>
+    <label>Titre<input id="training-title" required></label>
+    <label>Catégorie<input id="training-category" value="Générale"></label>
+    <label>Description<textarea id="training-description" rows="5"></textarea></label>
+    <div class="dialog-actions">
+      <button id="cancel-training" class="secondary-action" type="button">Annuler</button>
+      <button class="primary-action" type="submit">Créer</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="assign-dialog" class="modal">
+  <form id="assign-form" class="modal-card">
+    <h2>Attribuer une formation</h2>
+    <label>Employé<select id="assign-employee" required></select></label>
+    <label>Formation<select id="assign-training-select" required></select></label>
+    <div class="dialog-actions">
+      <button id="cancel-assign" class="secondary-action" type="button">Annuler</button>
+      <button class="primary-action" type="submit">Attribuer</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast"></div>
+<script src="/js/training/training.js" defer></script>
+</body>
+</html>

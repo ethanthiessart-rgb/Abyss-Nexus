@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Carrière</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/career.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+  <main class="main-panel">
+    <header class="topbar">
+      <div><p class="topbar-kicker">CAREER TIMELINE</p><h1>Carrière</h1></div>
+      <button id="new-career-event" class="primary-action" type="button">Nouvel évènement</button>
+    </header>
+    <section id="career-list" class="timeline"></section>
+  </main>
+</div>
+
+<dialog id="career-dialog" class="modal">
+  <form id="career-form" class="modal-card">
+    <h2>Évènement de carrière</h2>
+    <label>Employé<select id="career-employee" required></select></label>
+    <label>Type<select id="career-type">
+      <option value="promotion">Promotion</option>
+      <option value="grade_change">Changement de grade</option>
+      <option value="department_change">Mutation</option>
+      <option value="reward">Récompense</option>
+      <option value="distinction">Distinction</option>
+      <option value="recruitment">Recrutement</option>
+      <option value="other">Autre</option>
+    </select></label>
+    <label>Titre<input id="career-title" required></label>
+    <label>Description<textarea id="career-description" rows="5"></textarea></label>
+    <label>Date<input id="career-date" type="datetime-local"></label>
+    <div class="dialog-actions">
+      <button id="cancel-career" class="secondary-action" type="button">Annuler</button>
+      <button class="primary-action" type="submit">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast"></div>
+<script src="/js/career/career.js" defer></script>
+</body>
+</html>

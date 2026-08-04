@@ -1,0 +1,9 @@
+'use strict';
+(() => {
+  const $=s=>document.querySelector(s),toast=$('#toast');
+  const show=m=>{toast.textContent=m;toast.classList.add('is-visible');setTimeout(()=>toast.classList.remove('is-visible'),2200)};
+  async function api(){const r=await fetch('/api/statistics',{headers:{Accept:'application/json'}});const d=await r.json();if(!r.ok)throw new Error(d.message||'Erreur');return d}
+  function fmt(v){return new Intl.DateTimeFormat('fr-FR',{dateStyle:'medium',timeStyle:'short'}).format(new Date(v.endsWith?.('Z')?v:v+'Z'))}
+  async function load(){const d=await api();$('#users-total').textContent=d.users.total;$('#users-detail').textContent=`${d.users.active} actifs · ${d.users.suspended} suspendus`;$('#reports-total').textContent=d.reports.total;$('#reports-detail').textContent=`${d.reports.validated} validés · ${d.reports.drafts} brouillons`;$('#sanctions-total').textContent=d.sanctions.total;$('#sanctions-detail').textContent=`${d.sanctions.active} actives · ${d.sanctions.cancelled} annulées`;$('#documents-total').textContent=d.documents.total;$('#documents-detail').textContent=`${d.documents.active} actifs · ${d.documents.archived} archivés`;$('#announcements-total').textContent=d.announcements.total;$('#announcements-detail').textContent=`${d.announcements.active} actives · ${d.announcements.archived} archivées`;const max=Math.max(1,...d.departments.map(x=>x.count));$('#department-bars').innerHTML=d.departments.map(x=>`<div class="department-row"><span>${x.department}</span><div class="department-track"><span style="width:${Math.round(x.count/max*100)}%"></span></div><strong>${x.count}</strong></div>`).join('');$('#recent-activity').innerHTML=d.recentActivity.map(x=>`<article class="activity-row"><strong>${x.action}</strong><span>${x.actor}</span><small>${x.details||''} · ${fmt(x.createdAt)}</small></article>`).join('')}
+  $('#refresh-statistics').onclick=()=>load().catch(e=>show(e.message));load().catch(e=>show(e.message));
+})();

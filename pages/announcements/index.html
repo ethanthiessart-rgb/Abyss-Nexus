@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Abyss Nexus — Annonces</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/announcements.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="/assets/logos/abyss-nexus-logo.png" alt="">
+      <div><strong>ABYSS NEXUS</strong><span>Staff Management System</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="/dashboard">Tableau de bord</a>
+      <a class="nav-item" href="/personnel">Personnel</a>
+      <a class="nav-item" href="/reports">Rapports</a>
+      <a class="nav-item" href="/mail">Messagerie</a>
+      <a class="nav-item is-active" href="/announcements">Annonces</a>
+      <a class="nav-item" href="/documents">Documents</a>
+      <a class="nav-item" href="/discipline">Mes sanctions</a>
+    </nav>
+    <div class="sidebar-footer"><span>Core v1.0</span></div>
+  </aside>
+
+  <main class="main-panel">
+    <header class="topbar">
+      <div><p class="topbar-kicker">BROADCAST MODULE</p><h1>Annonces</h1></div>
+      <button id="new-announcement" class="primary-action" type="button" hidden>Nouvelle annonce</button>
+    </header>
+
+    <section id="announcement-list" class="announcement-grid"></section>
+    <p id="announcement-empty" class="empty-state" hidden>Aucune annonce visible.</p>
+  </main>
+</div>
+
+<dialog id="announcement-dialog" class="modal">
+  <form id="announcement-form" class="modal-card">
+    <header><div><p class="panel-kicker">NOUVELLE ANNONCE</p><h2>Publier une annonce</h2></div>
+      <button id="close-announcement" class="close-button" type="button">×</button>
+    </header>
+    <label>Titre<input id="announcement-title" maxlength="140" required></label>
+    <label>Priorité<select id="announcement-priority">
+      <option value="normal">Normale</option>
+      <option value="important">Importante</option>
+      <option value="urgent">Urgente</option>
+    </select></label>
+    <label>Contenu<textarea id="announcement-content" rows="10" maxlength="20000" required></textarea></label>
+    <label>Image URL<input id="announcement-image" type="url" placeholder="Facultatif"></label>
+    <label>Date de publication<input id="announcement-publish-at" type="datetime-local"></label>
+    <label class="checkbox-row"><input id="announcement-global" type="checkbox"> Annonce globale</label>
+    <label class="checkbox-row"><input id="announcement-pinned" type="checkbox"> Épingler</label>
+    <fieldset id="announcement-departments"><legend>Départements autorisés</legend></fieldset>
+    <p id="announcement-message" class="form-feedback"></p>
+    <button class="primary-action" type="submit">Enregistrer l’annonce</button>
+  </form>
+</dialog>
+<div id="toast" class="toast"></div>
+<script src="/js/announcements/announcements.js" defer></script>
+</body>
+</html>

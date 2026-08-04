@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070b">
+  <title>Abyss Nexus — Tableau de bord</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body class="dashboard-body">
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <img src="/assets/logos/abyss-nexus-logo.png" alt="Logo Abyss Nexus">
+        <div>
+          <strong>ABYSS NEXUS</strong>
+          <span>Core v1.0</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Navigation principale">
+        <a class="nav-link active" href="/dashboard">Tableau de bord</a>
+        <button class="nav-link" type="button" disabled>Messagerie <span>Bientôt</span></button>
+        <button class="nav-link" type="button" disabled>Rapports <span>Bientôt</span></button>
+        <button class="nav-link" type="button" disabled>Documents <span>Bientôt</span></button>
+        <button class="nav-link" type="button" disabled>Annonces <span>Bientôt</span></button>
+      </nav>
+
+      <div class="sidebar-footer">Staff Management System</div>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="topbar">
+        <div>
+          <span class="portal-status"><i></i> Portail opérationnel</span>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-button" type="button" aria-label="Notifications">🔔</button>
+          <button id="logout-button" class="logout-button" type="button">Déconnexion</button>
+        </div>
+      </header>
+
+      <section class="dashboard-content">
+        <div class="welcome-card">
+          <div>
+            <p class="eyebrow">CENTRE DE COMMANDEMENT</p>
+            <h1>Bienvenue, <span id="user-name">membre du personnel</span>.</h1>
+            <p>Ta session sécurisée Abyss Nexus est maintenant active.</p>
+          </div>
+          <img id="user-avatar" src="/assets/logos/abyss-nexus-logo.png" alt="Avatar du membre">
+        </div>
+
+        <section class="info-grid" aria-label="Informations du compte">
+          <article class="info-card"><span>Matricule</span><strong id="user-matricule">—</strong></article>
+          <article class="info-card"><span>Grade</span><strong id="user-grade">—</strong></article>
+          <article class="info-card"><span>Département</span><strong id="user-department">—</strong></article>
+          <article class="info-card"><span>Type de compte</span><strong id="user-account-type">—</strong></article>
+        </section>
+
+        <section class="module-preview">
+          <div>
+            <p class="eyebrow">CORE v1.0</p>
+            <h2>Authentification opérationnelle</h2>
+            <p>Cette étape installe la base de données, les sessions sécurisées et le premier compte Direction. Les prochains modules viendront se brancher ici.</p>
+          </div>
+          <div class="security-chip">SESSION ACTIVE</div>
+        </section>
+      </section>
+    </main>
+  </div>
+  <script src="/js/dashboard/dashboard.js" defer></script>
+</body>
+</html>

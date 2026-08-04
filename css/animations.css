@@ -1,0 +1,20 @@
+@keyframes logoSpin { from { transform: rotate(0deg) scale(.95); } to { transform: rotate(360deg) scale(.95); } }
+@keyframes ringPulse { 0%,100% { opacity:.2; transform:scale(.9); } 50% { opacity:.85; transform:scale(1.04); } }
+@keyframes floatBlue { 50% { transform: translate(8vw, -6vh) scale(1.1); } }
+@keyframes floatRed { 50% { transform: translate(-7vw, 5vh) scale(1.12); } }
+@keyframes revealUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
+@keyframes scan { from { background-position: 0 0; } to { background-position: 0 44px; } }
+
+.boot-logo { animation: logoSpin 8s linear infinite; }
+.scan-ring { animation: ringPulse 2.2s ease-in-out infinite; }
+.ambient-blue { animation: floatBlue 8s ease-in-out infinite; }
+.ambient-red { animation: floatRed 9s ease-in-out infinite; }
+.login-layout { animation: revealUp .7s ease both; }
+
+/* Rotation forcée du logo de démarrage, même si Windows demande de réduire les animations. */
+.boot-logo {
+  display: block;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  animation: logoSpin 6s linear infinite !important;
+}

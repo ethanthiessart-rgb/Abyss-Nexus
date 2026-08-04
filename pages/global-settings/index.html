@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Configuration globale</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/global-settings.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+
+  <main class="main-panel">
+    <header class="topbar">
+      <div>
+        <p class="topbar-kicker">GLOBAL CONFIGURATION CENTER</p>
+        <h1>Configuration globale</h1>
+      </div>
+
+      <div class="topbar-actions">
+        <button id="reset-settings" class="danger-action" type="button">
+          Valeurs par défaut
+        </button>
+        <button id="save-settings" class="primary-action" type="button">
+          Enregistrer
+        </button>
+      </div>
+    </header>
+
+    <nav class="settings-tabs" aria-label="Catégories">
+      <button class="is-active" data-section="branding">Personnalisation</button>
+      <button data-section="security">Sécurité</button>
+      <button data-section="general">Général</button>
+      <button data-section="modules">Modules</button>
+      <button data-section="backup">Sauvegardes</button>
+      <button data-section="notifications">Notifications</button>
+      <button data-section="history">Historique</button>
+    </nav>
+
+    <form id="global-settings-form">
+      <section class="settings-section is-active" data-settings-section="branding">
+        <article class="panel-card settings-card">
+          <p class="panel-kicker">IDENTITÉ DU PORTAIL</p>
+
+          <div class="form-grid">
+            <label>Nom de l’organisation
+              <input data-path="branding.organizationName" required>
+            </label>
+
+            <label>Sous-titre
+              <input data-path="branding.portalSubtitle">
+            </label>
+
+            <label class="form-wide">Message d’accueil
+              <textarea data-path="branding.welcomeMessage" rows="3"></textarea>
+            </label>
+
+            <label class="form-wide">Message de connexion
+              <textarea data-path="branding.loginMessage" rows="3"></textarea>
+            </label>
+
+            <label>Couleur principale
+              <input data-path="branding.primaryColor" type="color">
+            </label>
+
+            <label>Couleur secondaire
+              <input data-path="branding.secondaryColor" type="color">
+            </label>
+
+            <label>Thème par défaut
+              <select data-path="branding.defaultTheme">
+                <option value="abyss-blue">Abyss Blue</option>
+                <option value="dark">Dark</option>
+                <option value="midnight">Midnight</option>
+                <option value="crimson">Crimson</option>
+                <option value="light">Clair</option>
+              </select>
+            </label>
+
+            <label>URL du logo
+              <input data-path="branding.logoUrl">
+            </label>
+
+            <label>URL de la bannière
+              <input data-path="branding.bannerUrl">
+            </label>
+
+            <label>URL du favicon
+              <input data-path="branding.faviconUrl">
+            </label>
+          </div>
+        </article>
+
+        <article class="panel-card settings-preview">
+          <p class="panel-kicker">APERÇU</p>
+          <div id="branding-preview">
+            <img id="preview-logo" alt="">
+            <h2 id="preview-name">Abyss Nexus</h2>
+            <p id="preview-subtitle">Staff Management System</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="settings-section" data-settings-section="security">
+        <article class="panel-card settings-card">
+          <p class="panel-kicker">POLITIQUE DE SÉCURITÉ</p>
+
+          <div class="form-grid">
+            <label>Longueur minimale du mot de passe
+              <input data-path="security.passwordMinLength"
+                     type="number" min="6" max="64">
+            </label>
+
+            <label>Durée d’une session en minutes
+              <input data-path="security.sessionDurationMinutes"
+                     type="number" min="15" max="10080">
+            </label>
+
+            <label>Verrouillage automatique en minutes
+              <input data-path="security.autoLockMinutes"
+                     type="number" min="1" max="1440">
+            </label>
+
+            <label>Tentatives de connexion maximales
+              <input data-path="security.maxLoginAttempts"
+                     type="number" min="1" max="25">
+            </label>
+
+            <label>Blocage temporaire en minutes
+              <input data-path="security.temporaryBlockMinutes"
+                     type="number" min="1" max="1440">
+            </label>
+          </div>
+
+          <div class="toggle-grid">
+            <label><input data-path="security.requireUppercase" type="checkbox"> Majuscule obligatoire</label>
+            <label><input data-path="security.requireNumber" type="checkbox"> Chiffre obligatoire</label>
+            <label><input data-path="security.requireSpecial" type="checkbox"> Caractère spécial obligatoire</label>
+            <label><input data-path="security.emergencyMaintenanceLogin" type="checkbox"> Connexion d’urgence en maintenance</label>
+          </div>
+        </article>
+      </section>
+
+      <section class="settings-section" data-settings-section="general">
+        <article class="panel-card settings-card">
+          <p class="panel-kicker">PARAMÈTRES GÉNÉRAUX</p>
+
+          <div class="form-grid">
+            <label>Langue
+              <select data-path="general.locale">
+                <option value="fr-FR">Français</option>
+                <option value="en-US">English</option>
+              </select>
+            </label>
+
+            <label>Fuseau horaire
+              <input data-path="general.timezone">
+            </label>
+
+            <label>Format de date
+              <select data-path="general.dateFormat">
+                <option value="DD/MM/YYYY">JJ/MM/AAAA</option>
+                <option value="YYYY-MM-DD">AAAA-MM-JJ</option>
+                <option value="MM/DD/YYYY">MM/JJ/AAAA</option>
+              </select>
+            </label>
+
+            <label>Format d’heure
+              <select data-path="general.timeFormat">
+                <option value="24h">24 heures</option>
+                <option value="12h">12 heures</option>
+              </select>
+            </label>
+
+            <label>Nom du Core
+              <input data-path="general.coreName">
+            </label>
+
+            <label>Version affichée
+              <input data-path="general.versionLabel">
+            </label>
+          </div>
+
+          <div class="toggle-grid">
+            <label><input data-path="general.animationsEnabled" type="checkbox"> Animations</label>
+            <label><input data-path="general.glowEnabled" type="checkbox"> Effets lumineux</label>
+            <label><input data-path="general.notificationSoundsEnabled" type="checkbox"> Sons de notification</label>
+          </div>
+        </article>
+      </section>
+
+      <section class="settings-section" data-settings-section="modules">
+        <article class="panel-card settings-card">
+          <p class="panel-kicker">ACTIVATION DES MODULES</p>
+
+          <div class="module-grid">
+            <label><input data-path="modules.chat" type="checkbox"> Chat interne</label>
+            <label><input data-path="modules.realtimeNotifications" type="checkbox"> Notifications en direct</label>
+            <label><input data-path="modules.advancedReports" type="checkbox"> Rapports avancés</label>
+            <label><input data-path="modules.advancedSanctions" type="checkbox"> Sanctions avancées</label>
+            <label><input data-path="modules.training" type="checkbox"> Formations</label>
+            <label><input data-path="modules.evaluations" type="checkbox"> Évaluations</label>
+            <label><input data-path="modules.planning" type="checkbox"> Planning</label>
+            <label><input data-path="modules.career" type="checkbox"> Carrière</label>
+            <label><input data-path="modules.archives" type="checkbox"> Archives</label>
+            <label><input data-path="modules.statistics" type="checkbox"> Statistiques</label>
+          </div>
+
+          <p class="settings-note">
+            Les modules désactivés seront automatiquement masqués dans la
+            navigation après actualisation.
+          </p>
+        </article>
+      </section>
+
+      <section class="settings-section" data-settings-section="backup">
+        <article class="panel-card settings-card">
+          <p class="panel-kicker">SAUVEGARDES AUTOMATIQUES</p>
+
+          <div class="toggle-grid">
+            <label><input data-path="backup.automaticEnabled" type="checkbox"> Activer les sauvegardes automatiques</label>
+            <label><input data-path="backup.includeUploads" type="checkbox"> Inclure les documents importés</label>
+          </div>
+
+          <div class="form-grid">
+            <label>Fréquence
+              <select data-path="backup.frequency">
+                <option value="daily">Chaque jour</option>
+                <option value="weekly">Chaque semaine</option>
+              </select>
+            </label>
+
+            <label>Heure
+              <input data-path="backup.hour" type="time">
+            </label>
+
+            <label>Nombre de sauvegardes conservées
+              <input data-path="backup.retentionCount"
+                     type="number" min="1" max="100">
+            </label>
+          </div>
+
+          <p class="settings-note">
+            Cette page enregistre la politique souhaitée. L’exécution planifiée
+            sera reliée au service de sauvegarde dans un prochain correctif.
+          </p>
+        </article>
+      </section>
+
+      <section class="settings-section" data-settings-section="notifications">
+        <article class="panel-card settings-card">
+          <p class="panel-kicker">PRÉFÉRENCES DE NOTIFICATION</p>
+
+          <div class="module-grid">
+            <label><input data-path="notifications.browserEnabled" type="checkbox"> Notifications navigateur</label>
+            <label><input data-path="notifications.urgentEnabled" type="checkbox"> Alertes urgentes</label>
+            <label><input data-path="notifications.reportsEnabled" type="checkbox"> Rapports</label>
+            <label><input data-path="notifications.sanctionsEnabled" type="checkbox"> Sanctions</label>
+            <label><input data-path="notifications.trainingEnabled" type="checkbox"> Formations</label>
+            <label><input data-path="notifications.leaveEnabled" type="checkbox"> Congés et absences</label>
+            <label><input data-path="notifications.maintenanceEnabled" type="checkbox"> Maintenance</label>
+            <label><input data-path="notifications.backupsEnabled" type="checkbox"> Sauvegardes</label>
+          </div>
+        </article>
+      </section>
+
+      <section class="settings-section" data-settings-section="history">
+        <article class="panel-card settings-card">
+          <p class="panel-kicker">HISTORIQUE DES MODIFICATIONS</p>
+          <div id="settings-history" class="history-list"></div>
+        </article>
+      </section>
+    </form>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="/js/global-settings/global-settings.js" defer></script>
+</body>
+</html>

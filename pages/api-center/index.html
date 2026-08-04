@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Centre API</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/api-center.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar"></aside>
+
+  <main class="main-panel">
+    <header class="topbar">
+      <div>
+        <p class="topbar-kicker">REST API MANAGEMENT</p>
+        <h1>Centre API</h1>
+      </div>
+      <button id="new-api-key" class="primary-action" type="button">
+        Nouvelle clé API
+      </button>
+    </header>
+
+    <section class="api-info panel-card">
+      <div>
+        <p class="panel-kicker">API REST V1</p>
+        <h2>Connexion d’applications externes</h2>
+        <p>
+          Les requêtes doivent envoyer la clé dans l’en-tête
+          <code>x-api-key</code>.
+        </p>
+      </div>
+      <div class="api-base-url">
+        <span>Base locale</span>
+        <code id="base-url"></code>
+      </div>
+    </section>
+
+    <section class="api-layout">
+      <article class="panel-card">
+        <p class="panel-kicker">CLÉS ACTIVES ET RÉVOQUÉES</p>
+        <div id="api-key-list" class="api-key-list"></div>
+      </article>
+
+      <article class="panel-card">
+        <p class="panel-kicker">ENDPOINTS DISPONIBLES</p>
+        <div class="endpoint-list">
+          <article><code>GET /api/v1/status</code><span>status.read</span></article>
+          <article><code>GET /api/v1/employees</code><span>employees.read</span></article>
+          <article><code>GET /api/v1/departments</code><span>departments.read</span></article>
+          <article><code>GET /api/v1/planning</code><span>planning.read</span></article>
+          <article><code>GET /api/v1/reports</code><span>reports.read</span></article>
+        </div>
+
+        <p class="panel-kicker api-example-title">EXEMPLE POWERSHELL</p>
+        <pre id="api-example"></pre>
+      </article>
+    </section>
+  </main>
+</div>
+
+<dialog id="api-key-dialog" class="modal">
+  <form id="api-key-form" class="modal-card">
+    <h2>Créer une clé API</h2>
+
+    <label>Nom
+      <input id="api-key-name" required maxlength="80"
+             placeholder="Omnix Production">
+    </label>
+
+    <label>Limite par minute
+      <input id="api-rate-limit" type="number"
+             min="1" max="1000" value="60">
+    </label>
+
+    <label>Expiration facultative
+      <input id="api-expires-at" type="datetime-local">
+    </label>
+
+    <fieldset id="api-scopes">
+      <legend>Portées autorisées</legend>
+    </fieldset>
+
+    <div class="dialog-actions">
+      <button id="cancel-api-key" class="secondary-action" type="button">
+        Annuler
+      </button>
+      <button class="primary-action" type="submit">
+        Générer
+      </button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="api-secret-dialog" class="modal">
+  <section class="modal-card">
+    <h2>Clé API créée</h2>
+    <p>
+      Copie cette clé maintenant. Pour des raisons de sécurité,
+      elle ne sera plus jamais affichée.
+    </p>
+    <textarea id="api-secret" rows="4" readonly></textarea>
+    <div class="dialog-actions">
+      <button id="copy-api-secret" class="primary-action" type="button">
+        Copier
+      </button>
+      <button id="close-api-secret" class="secondary-action" type="button">
+        Fermer
+      </button>
+    </div>
+  </section>
+</dialog>
+
+<div id="toast" class="toast"></div>
+<script src="/js/api-center/api-center.js" defer></script>
+</body>
+</html>
