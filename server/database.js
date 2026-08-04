@@ -195,6 +195,106 @@ async function initializeDatabase() {
         PRIMARY KEY(document_id, department),
         FOREIGN KEY(document_id) REFERENCES documents(id) ON DELETE CASCADE
       );
+
+
+      CREATE TABLE IF NOT EXISTS user_settings (
+        user_id INTEGER PRIMARY KEY,
+        theme TEXT NOT NULL DEFAULT 'abyss-blue',
+        animations_enabled INTEGER NOT NULL DEFAULT 1,
+        sounds_enabled INTEGER NOT NULL DEFAULT 0,
+        glow_enabled INTEGER NOT NULL DEFAULT 1,
+        desktop_notifications_enabled INTEGER NOT NULL DEFAULT 0,
+        auto_lock_minutes INTEGER NOT NULL DEFAULT 15,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS notifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        type TEXT NOT NULL DEFAULT 'info',
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        link TEXT,
+        read_at TEXT,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_notifications_user_created
+        ON notifications(user_id, created_at DESC);
+
+      CREATE INDEX IF NOT EXISTS idx_notifications_user_unread
+        ON notifications(user_id, read_at);
+
+      CREATE TABLE IF NOT EXISTS departments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        color TEXT NOT NULL DEFAULT '#238fd3',
+        icon TEXT NOT NULL DEFAULT '🏢',
+        active INTEGER NOT NULL DEFAULT 1,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS maintenance_settings (
+        id INTEGER PRIMARY KEY CHECK(id = 1),
+        mode TEXT NOT NULL DEFAULT 'operational',
+        message TEXT NOT NULL DEFAULT '',
+        return_unknown INTEGER NOT NULL DEFAULT 0,
+        return_at TEXT,
+        updated_by_user_id INTEGER,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(updated_by_user_id) REFERENCES users(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS maintenance_allowed_departments (
+        department TEXT PRIMARY KEY
+      );
+
+      CREATE TABLE IF NOT EXISTS global_settings (
+        id INTEGER PRIMARY KEY CHECK(id = 1),
+        settings_json TEXT NOT NULL DEFAULT '{}',
+        updated_by_user_id INTEGER,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(updated_by_user_id) REFERENCES users(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS global_settings_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        changed_by_user_id INTEGER,
+        old_settings_json TEXT NOT NULL DEFAULT '{}',
+        new_settings_json TEXT NOT NULL DEFAULT '{}',
+        ip_address TEXT,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(changed_by_user_id) REFERENCES users(id)
+      );
+
+      INSERT OR IGNORE INTO maintenance_settings (
+        id, mode, message, return_unknown, return_at
+      ) VALUES (
+        1, 'operational', '', 0, NULL
+      );
+
+      INSERT OR IGNORE INTO global_settings (
+        id, settings_json
+      ) VALUES (
+        1, '{}'
+      );
+
+      INSERT OR IGNORE INTO departments (name, color, icon, active)
+      VALUES
+        ('Administration', '#238fd3', '🏢', 1),
+        ('Administration Supérieure', '#8b5cf6', '🏛️', 1),
+        ('Animateur', '#f59e0b', '🎉', 1),
+        ('Assistant', '#14b8a6', '🤝', 1),
+        ('Builder', '#84cc16', '🧱', 1),
+        ('Direction Modération', '#ef4444', '👑', 1),
+        ('Développeur', '#6366f1', '💻', 1),
+        ('Modération', '#f97316', '🛡️', 1),
+        ('Morpheur', '#ec4899', '🎭', 1),
+        ('Scripter', '#06b6d4', '📜', 1),
+        ('Équipe de Direction', '#dc2626', '👑', 1);
     `);
 
     persistDatabase();
