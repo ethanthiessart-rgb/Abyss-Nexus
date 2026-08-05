@@ -8,7 +8,7 @@ const express = require('express');
 const helmet = require('helmet');
 const session = require('express-session');
 
-const { initializeDatabase } = require('./server/database');
+const { initializeDatabase, closeDatabase } = require('./server/database');
 const { registerAuthRoutes } = require('./server/auth');
 const { registerPersonnelRoutes } = require('./server/personnel');
 const { registerReportRoutes } = require('./server/reports');
@@ -236,9 +236,40 @@ app.use((error, _req, res, _next) => {
   res.status(500).send('Une erreur interne est survenue.');
 });
 
+let httpServer;
+let shutdownStarted = false;
+
+async function shutdown(signal) {
+  if (shutdownStarted) return;
+  shutdownStarted = true;
+
+  console.log(`${signal} reçu : sauvegarde de la base avant arrêt...`);
+
+  const forceExit = setTimeout(() => {
+    console.error('Arrêt forcé après expiration du délai de sauvegarde.');
+    process.exit(1);
+  }, 12_000);
+  forceExit.unref();
+
+  try {
+    if (httpServer) {
+      await new Promise((resolve) => httpServer.close(resolve));
+    }
+    await closeDatabase();
+    clearTimeout(forceExit);
+    process.exit(0);
+  } catch (error) {
+    console.error('Erreur pendant l’arrêt propre :', error);
+    process.exit(1);
+  }
+}
+
+process.once('SIGTERM', () => shutdown('SIGTERM'));
+process.once('SIGINT', () => shutdown('SIGINT'));
+
 initializeDatabase()
   .then(() => {
-    app.listen(PORT, '0.0.0.0', () => {
+    httpServer = app.listen(PORT, '0.0.0.0', () => {
       console.log(`Abyss Nexus disponible sur http://localhost:${PORT}`);
     });
   })
