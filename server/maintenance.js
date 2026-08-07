@@ -14,8 +14,23 @@ let cachedState = {
   message: '',
   returnUnknown: false,
   returnAt: null,
-  allowedDepartments: []
+  allowedDepartments: [],
+  alertCode: 'green',
+  alert: { code: 'green', label: 'Code Vert', icon: '🟢', description: 'Site calme. Aucune surveillance renforcée requise.' }
 };
+
+const ALERT_CODES = {
+  green: { label: 'Code Vert', icon: '🟢', description: 'Site calme. Aucune surveillance renforcée requise.' },
+  yellow: { label: 'Code Jaune', icon: '🟡', description: 'Vigilance légère. Une surveillance minimale est recommandée.' },
+  orange: { label: 'Code Orange', icon: '🟠', description: 'Site en alerte. Une surveillance renforcée est requise.' },
+  red: { label: 'Code Rouge', icon: '🔴', description: 'Alerte majeure. Un dispositif de haute sécurité est requis.' },
+  black: { label: 'Code Noir', icon: '⚫', description: 'Menaces multiples ou critiques. Niveau maximal de sécurité requis.' }
+};
+
+function alertForCode(code) {
+  const normalized = Object.hasOwn(ALERT_CODES, code) ? code : 'green';
+  return { code: normalized, ...ALERT_CODES[normalized] };
+}
 
 function labelForMode(mode) {
   return {
@@ -39,7 +54,7 @@ function loadMaintenanceState() {
     const { one, all } = getDatabaseHelpers();
 
     const row = one(`
-      SELECT mode, message, return_unknown, return_at
+      SELECT mode, message, return_unknown, return_at, alert_code
       FROM maintenance_settings
       WHERE id = 1
     `);
@@ -56,7 +71,9 @@ function loadMaintenanceState() {
       message: row?.message || '',
       returnUnknown: Boolean(row?.return_unknown),
       returnAt: row?.return_at || null,
-      allowedDepartments: departments
+      allowedDepartments: departments,
+      alertCode: alertForCode(row?.alert_code || 'green').code,
+      alert: alertForCode(row?.alert_code || 'green')
     };
   } catch (error) {
     console.error('Impossible de charger l’état de maintenance :', error);
@@ -608,6 +625,7 @@ function registerMaintenanceRoutes(app) {
       ]);
 
       const mode = String(req.body.mode || '');
+      const alertCode = String(req.body.alertCode || 'green').toLowerCase();
       const message = String(req.body.message || '').trim();
       const returnUnknown = Boolean(req.body.returnUnknown);
       const returnAt = String(req.body.returnAt || '').trim() || null;
@@ -620,24 +638,26 @@ function registerMaintenanceRoutes(app) {
         : [];
 
       if (!modes.has(mode)) {
-        return res.status(400).json({
-          ok: false,
-          message: 'État du portail invalide.'
-        });
+        return res.status(400).json({ ok: false, message: 'État du portail invalide.' });
+      }
+
+      if (!Object.hasOwn(ALERT_CODES, alertCode)) {
+        return res.status(400).json({ ok: false, message: "Code d'alerte invalide." });
       }
 
       const { run } = getDatabaseHelpers();
 
       run(`
         INSERT INTO maintenance_settings (
-          id, mode, message, return_unknown, return_at,
+          id, mode, message, return_unknown, return_at, alert_code,
           updated_by_user_id, updated_at
-        ) VALUES (1, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        ) VALUES (1, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
         ON CONFLICT(id) DO UPDATE SET
           mode = excluded.mode,
           message = excluded.message,
           return_unknown = excluded.return_unknown,
           return_at = excluded.return_at,
+          alert_code = excluded.alert_code,
           updated_by_user_id = excluded.updated_by_user_id,
           updated_at = CURRENT_TIMESTAMP
       `, [
@@ -645,6 +665,7 @@ function registerMaintenanceRoutes(app) {
         message,
         returnUnknown ? 1 : 0,
         returnUnknown ? null : returnAt,
+        alertCode,
         req.session.user.id
       ]);
 
@@ -663,7 +684,7 @@ function registerMaintenanceRoutes(app) {
         ) VALUES (?, 'MAINTENANCE_UPDATE', ?, ?)
       `, [
         req.session.user.id,
-        `Mode=${mode}; Départements=${allowedDepartments.join(', ') || 'aucun'}`,
+        `Mode=${mode}; Alerte=${alertForCode(alertCode).label}; Départements=${allowedDepartments.join(', ') || 'aucun'}`,
         req.ip
       ]);
 

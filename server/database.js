@@ -4,131 +4,17 @@ const fs = require('node:fs');
 const path = require('node:path');
 const initSqlJs = require('sql.js');
 const bcrypt = require('bcryptjs');
-const { Pool } = require('pg');
 
 const DATABASE_DIR = path.join(__dirname, '..', 'database');
 const DATABASE_FILE = path.join(DATABASE_DIR, 'abyss-nexus.sqlite');
-const SCHEMA_FILE = path.join(__dirname, 'schema.sql');
-const SNAPSHOT_TABLE = 'abyss_nexus_sqlite_snapshot';
 
 let dbPromise;
 let database;
-let pool;
-let saveTimer = null;
-let saveChain = Promise.resolve();
-let shuttingDown = false;
-
-function isNeonEnabled() {
-  return Boolean(String(process.env.DATABASE_URL || '').trim());
-}
-
-function createPool() {
-  if (!isNeonEnabled()) return null;
-  if (pool) return pool;
-
-  pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
-    max: 3,
-    idleTimeoutMillis: 30_000,
-    connectionTimeoutMillis: 15_000
-  });
-
-  pool.on('error', (error) => {
-    console.error('Erreur inattendue de connexion Neon :', error);
-  });
-
-  return pool;
-}
-
-async function initializeSnapshotStorage() {
-  const client = createPool();
-  if (!client) return;
-
-  await client.query(`
-    CREATE TABLE IF NOT EXISTS ${SNAPSHOT_TABLE} (
-      id SMALLINT PRIMARY KEY CHECK (id = 1),
-      sqlite_data BYTEA NOT NULL,
-      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    )
-  `);
-}
-
-async function loadRemoteSnapshot() {
-  if (!isNeonEnabled()) return null;
-
-  await initializeSnapshotStorage();
-  const result = await pool.query(
-    `SELECT sqlite_data FROM ${SNAPSHOT_TABLE} WHERE id = 1`
-  );
-
-  if (!result.rows.length || !result.rows[0].sqlite_data) return null;
-  return Buffer.from(result.rows[0].sqlite_data);
-}
-
-function exportDatabase() {
-  if (!database) return null;
-  return Buffer.from(database.export());
-}
-
-function persistLocalSnapshot(buffer = exportDatabase()) {
-  if (!buffer) return;
-  fs.mkdirSync(DATABASE_DIR, { recursive: true });
-  fs.writeFileSync(DATABASE_FILE, buffer);
-}
-
-async function saveRemoteSnapshot(buffer) {
-  if (!isNeonEnabled() || !buffer) return;
-
-  await initializeSnapshotStorage();
-  await pool.query(
-    `INSERT INTO ${SNAPSHOT_TABLE} (id, sqlite_data, updated_at)
-     VALUES (1, $1, NOW())
-     ON CONFLICT (id) DO UPDATE SET
-       sqlite_data = EXCLUDED.sqlite_data,
-       updated_at = NOW()`,
-    [buffer]
-  );
-}
-
-function queueRemoteSave(delayMs = 150) {
-  if (!isNeonEnabled() || shuttingDown) return;
-
-  if (saveTimer) clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    saveTimer = null;
-    const buffer = exportDatabase();
-
-    saveChain = saveChain
-      .then(() => saveRemoteSnapshot(buffer))
-      .catch((error) => {
-        console.error('Impossible de sauvegarder la base dans Neon :', error);
-      });
-  }, delayMs);
-}
 
 function persistDatabase() {
-  const buffer = exportDatabase();
-  if (!buffer) return;
-  persistLocalSnapshot(buffer);
-  queueRemoteSave();
-}
-
-async function flushDatabase() {
   if (!database) return;
-
-  if (saveTimer) {
-    clearTimeout(saveTimer);
-    saveTimer = null;
-  }
-
-  const buffer = exportDatabase();
-  persistLocalSnapshot(buffer);
-
-  if (isNeonEnabled()) {
-    saveChain = saveChain.then(() => saveRemoteSnapshot(buffer));
-    await saveChain;
-  }
+  fs.mkdirSync(DATABASE_DIR, { recursive: true });
+  fs.writeFileSync(DATABASE_FILE, Buffer.from(database.export()));
 }
 
 function one(sql, params = []) {
@@ -158,32 +44,8 @@ function run(sql, params = []) {
   persistDatabase();
 }
 
-function applySchema() {
-  if (!fs.existsSync(SCHEMA_FILE)) {
-    throw new Error(`Schéma SQL introuvable : ${SCHEMA_FILE}`);
-  }
-
-  const schema = fs.readFileSync(SCHEMA_FILE, 'utf8');
-  database.run(schema);
-
-  database.run(`
-    INSERT OR IGNORE INTO maintenance_settings (
-      id, mode, message, return_unknown, return_at
-    ) VALUES (1, 'operational', '', 0, NULL);
-
-    INSERT OR IGNORE INTO global_settings (
-      id, settings_json
-    ) VALUES (1, '{}');
-  `);
-}
-
 async function createInitialDirectionAccount() {
-  const existing = one(
-    `SELECT id FROM users
-     WHERE account_type = 'direction'
-     ORDER BY id ASC
-     LIMIT 1`
-  );
+  const existing = one('SELECT id FROM users LIMIT 1');
   if (existing) return;
 
   const matricule =
@@ -222,55 +84,235 @@ async function initializeDatabase() {
     const SQL = await initSqlJs();
     fs.mkdirSync(DATABASE_DIR, { recursive: true });
 
-    let initialBuffer = null;
-
-    if (isNeonEnabled()) {
-      try {
-        initialBuffer = await loadRemoteSnapshot();
-        if (initialBuffer) {
-          console.log('Base Abyss Nexus chargée depuis Neon.');
-        }
-      } catch (error) {
-        console.error('Impossible de charger la base depuis Neon :', error);
-        throw error;
-      }
-    }
-
-    if (!initialBuffer && fs.existsSync(DATABASE_FILE)) {
-      initialBuffer = fs.readFileSync(DATABASE_FILE);
-      console.log('Base Abyss Nexus chargée depuis le disque local.');
-    }
-
-    database = initialBuffer
-      ? new SQL.Database(initialBuffer)
+    database = fs.existsSync(DATABASE_FILE)
+      ? new SQL.Database(fs.readFileSync(DATABASE_FILE))
       : new SQL.Database();
 
-    applySchema();
+    database.run(`
+      PRAGMA foreign_keys = ON;
+
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        discord_id TEXT UNIQUE,
+        discord_username TEXT NOT NULL,
+        avatar_url TEXT,
+        matricule TEXT NOT NULL UNIQUE,
+        identifier TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        account_type TEXT NOT NULL CHECK(account_type IN ('personnel', 'direction')),
+        grade TEXT NOT NULL,
+        department TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'active',
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        last_login_at TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS audit_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        action TEXT NOT NULL,
+        details TEXT,
+        ip_address TEXT,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS user_permission_overrides (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        permission_key TEXT NOT NULL,
+        effect TEXT NOT NULL CHECK(effect IN ('allow', 'deny')),
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(user_id, permission_key),
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS staff_profiles (
+        user_id INTEGER PRIMARY KEY,
+        signature TEXT,
+        force_password_change INTEGER NOT NULL DEFAULT 0,
+        first_login_notification INTEGER NOT NULL DEFAULT 1,
+        created_by_user_id INTEGER,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY(created_by_user_id) REFERENCES users(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS personnel_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        target_user_id INTEGER NOT NULL,
+        actor_user_id INTEGER,
+        action TEXT NOT NULL,
+        details TEXT,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(target_user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY(actor_user_id) REFERENCES users(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS announcements (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        author_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        priority TEXT NOT NULL DEFAULT 'normal',
+        image_url TEXT,
+        global_visible INTEGER NOT NULL DEFAULT 0,
+        pinned INTEGER NOT NULL DEFAULT 0,
+        status TEXT NOT NULL DEFAULT 'published',
+        publish_at TEXT,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        archived_at TEXT,
+        FOREIGN KEY(author_id) REFERENCES users(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS announcement_departments (
+        announcement_id INTEGER NOT NULL,
+        department TEXT NOT NULL,
+        PRIMARY KEY(announcement_id, department),
+        FOREIGN KEY(announcement_id) REFERENCES announcements(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS documents (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uploader_id INTEGER NOT NULL,
+        original_name TEXT NOT NULL,
+        stored_name TEXT NOT NULL UNIQUE,
+        mime_type TEXT,
+        size_bytes INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT,
+        folder TEXT NOT NULL DEFAULT 'Commun',
+        version INTEGER NOT NULL DEFAULT 1,
+        global_visible INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        archived_at TEXT,
+        FOREIGN KEY(uploader_id) REFERENCES users(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS document_departments (
+        document_id INTEGER NOT NULL,
+        department TEXT NOT NULL,
+        PRIMARY KEY(document_id, department),
+        FOREIGN KEY(document_id) REFERENCES documents(id) ON DELETE CASCADE
+      );
+
+
+      CREATE TABLE IF NOT EXISTS user_settings (
+        user_id INTEGER PRIMARY KEY,
+        theme TEXT NOT NULL DEFAULT 'abyss-blue',
+        animations_enabled INTEGER NOT NULL DEFAULT 1,
+        sounds_enabled INTEGER NOT NULL DEFAULT 0,
+        glow_enabled INTEGER NOT NULL DEFAULT 1,
+        desktop_notifications_enabled INTEGER NOT NULL DEFAULT 0,
+        auto_lock_minutes INTEGER NOT NULL DEFAULT 15,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS notifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        type TEXT NOT NULL DEFAULT 'info',
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        link TEXT,
+        read_at TEXT,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_notifications_user_created
+        ON notifications(user_id, created_at DESC);
+
+      CREATE INDEX IF NOT EXISTS idx_notifications_user_unread
+        ON notifications(user_id, read_at);
+
+      CREATE TABLE IF NOT EXISTS departments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        color TEXT NOT NULL DEFAULT '#238fd3',
+        icon TEXT NOT NULL DEFAULT '🏢',
+        active INTEGER NOT NULL DEFAULT 1,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS maintenance_settings (
+        id INTEGER PRIMARY KEY CHECK(id = 1),
+        mode TEXT NOT NULL DEFAULT 'operational',
+        message TEXT NOT NULL DEFAULT '',
+        return_unknown INTEGER NOT NULL DEFAULT 0,
+        return_at TEXT,
+        updated_by_user_id INTEGER,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(updated_by_user_id) REFERENCES users(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS maintenance_allowed_departments (
+        department TEXT PRIMARY KEY
+      );
+
+      CREATE TABLE IF NOT EXISTS global_settings (
+        id INTEGER PRIMARY KEY CHECK(id = 1),
+        settings_json TEXT NOT NULL DEFAULT '{}',
+        updated_by_user_id INTEGER,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(updated_by_user_id) REFERENCES users(id)
+      );
+
+      CREATE TABLE IF NOT EXISTS global_settings_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        changed_by_user_id INTEGER,
+        old_settings_json TEXT NOT NULL DEFAULT '{}',
+        new_settings_json TEXT NOT NULL DEFAULT '{}',
+        ip_address TEXT,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(changed_by_user_id) REFERENCES users(id)
+      );
+
+      INSERT OR IGNORE INTO maintenance_settings (
+        id, mode, message, return_unknown, return_at
+      ) VALUES (
+        1, 'operational', '', 0, NULL
+      );
+
+      INSERT OR IGNORE INTO global_settings (
+        id, settings_json
+      ) VALUES (
+        1, '{}'
+      );
+
+      INSERT OR IGNORE INTO departments (name, color, icon, active)
+      VALUES
+        ('Administration', '#238fd3', '🏢', 1),
+        ('Administration Supérieure', '#8b5cf6', '🏛️', 1),
+        ('Animateur', '#f59e0b', '🎉', 1),
+        ('Assistant', '#14b8a6', '🤝', 1),
+        ('Builder', '#84cc16', '🧱', 1),
+        ('Direction Modération', '#ef4444', '👑', 1),
+        ('Développeur', '#6366f1', '💻', 1),
+        ('Modération', '#f97316', '🛡️', 1),
+        ('Morpheur', '#ec4899', '🎭', 1),
+        ('Scripter', '#06b6d4', '📜', 1),
+        ('Équipe de Direction', '#dc2626', '👑', 1);
+    `);
+
+    // Migration légère : ajoute le code d'alerte global aux anciennes bases.
+    const maintenanceColumns = all('PRAGMA table_info(maintenance_settings)');
+    if (!maintenanceColumns.some((column) => column.name === 'alert_code')) {
+      database.run("ALTER TABLE maintenance_settings ADD COLUMN alert_code TEXT NOT NULL DEFAULT 'green'");
+    }
+
+    persistDatabase();
     await createInitialDirectionAccount();
-    await flushDatabase();
-
-    console.log(
-      isNeonEnabled()
-        ? 'Persistance Neon activée pour Abyss Nexus.'
-        : 'Mode SQLite local activé (DATABASE_URL absente).'
-    );
-
-    return { one, all, run, flushDatabase };
+    return { one, all, run };
   })();
 
   return dbPromise;
 }
 
-async function closeDatabase() {
-  shuttingDown = true;
-  await flushDatabase();
-  if (pool) await pool.end();
-}
-
 module.exports = {
   initializeDatabase,
-  flushDatabase,
-  closeDatabase,
   getDatabaseHelpers() {
     if (!database) {
       throw new Error('La base de données n’est pas initialisée.');

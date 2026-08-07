@@ -1,1 +1,12 @@
 .maintenance-badge{padding:8px 12px;border-radius:999px;background:rgba(58,169,255,.12);color:#7bc9ff}.maintenance-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding-bottom:45px}.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mode-grid label{cursor:pointer}.mode-grid input{display:none}.mode-grid span{display:block;padding:14px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.025)}.mode-grid input:checked+span{border-color:#3aa9ff;background:rgba(58,169,255,.12)}.maintenance-grid textarea,.maintenance-grid input[type="datetime-local"]{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:10px;background:#07101a;color:#fff}.maintenance-grid label{display:grid;gap:7px}.checkbox-row{display:flex!important;align-items:center;gap:8px}.department-checks{display:grid;grid-template-columns:1fr 1fr;gap:8px}.department-checks label{display:flex;align-items:center;gap:8px;padding:9px;border:1px solid rgba(255,255,255,.07);border-radius:9px}.primary-action{padding:11px 15px;border:1px solid #2e9ce9;border-radius:10px;background:linear-gradient(180deg,#228ed5,#176ea8);color:#fff;font-weight:700;cursor:pointer}.maintenance-submit{grid-column:1/-1}@media(max-width:900px){.maintenance-grid{grid-template-columns:1fr}}
+/* Code d'alerte global */
+.alert-code-card { grid-column: 1 / -1; }
+.alert-code-help { margin: 0 0 14px; color: var(--muted); }
+.alert-code-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 10px; }
+.alert-code-grid label { cursor: pointer; }
+.alert-code-grid input { position: absolute; opacity: 0; pointer-events: none; }
+.alert-code-grid span { min-height: 118px; display: flex; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: rgba(7,16,26,.72); transition: .18s ease; }
+.alert-code-grid small { color: var(--muted); line-height: 1.4; }
+.alert-code-grid input:checked + span { border-color: #62bdf5; box-shadow: 0 0 0 3px rgba(56,169,245,.12); transform: translateY(-2px); }
+@media(max-width:1100px){.alert-code-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.alert-code-grid{grid-template-columns:1fr}}
