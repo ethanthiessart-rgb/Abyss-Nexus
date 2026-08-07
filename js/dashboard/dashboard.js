@@ -1,1 +1,74 @@
-'use strict';(()=>{const $=s=>document.querySelector(s);async function api(url,opt={}){const r=await fetch(url,{headers:{Accept:'application/json',...(opt.headers||{})},...opt});const d=await r.json();if(!r.ok)throw new Error(d.message||'Erreur');return d}async function init(){const s=await api('/api/auth/session'),u=s.user,p=u.permissions||[];$('#user-name').textContent=u.username;$('#welcome-name').textContent=u.username;$('#user-grade').textContent=u.grade;$('#stat-matricule').textContent=u.matricule;$('#stat-grade').textContent=u.grade;$('#stat-department').textContent=u.department;$('#user-avatar').src=u.avatarUrl||'/assets/logos/abyss-nexus-logo.png';const pv=p.includes('personnel.view'),pm=p.includes('permissions.manage'),audit=p.includes('maintenance.manage');$('#personnel-link').hidden=!pv;$('#permissions-link').hidden=!pm;$('#permissions-module').hidden=!pm;$('#audit-link').hidden=!audit;$('#audit-module').hidden=!audit;const n=await api('/api/notification-center');$('#stat-notifications').textContent=n.unreadCount;const badge=$('#notification-count');badge.hidden=n.unreadCount===0;badge.textContent=n.unreadCount>99?'99+':n.unreadCount}$('#logout-button').onclick=async()=>{const d=await api('/api/auth/logout',{method:'POST'});location.assign(d.redirect||'/')};init().catch(()=>location.assign('/'))})();
+'use strict';
+
+(() => {
+  const $ = (selector) => document.querySelector(selector);
+
+  async function api(url, options = {}) {
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+        ...(options.headers || {})
+      },
+      ...options
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Erreur serveur.');
+    return data;
+  }
+
+  function applyModulePermissions(permissions) {
+    const cards = [...document.querySelectorAll('.module-card')];
+
+    for (const card of cards) {
+      const permission = card.dataset.permission;
+      if (permission && !permissions.includes(permission)) {
+        card.hidden = true;
+      }
+    }
+
+    for (const section of document.querySelectorAll('.module-section')) {
+      const visibleCards = [...section.querySelectorAll('.module-card')]
+        .filter((card) => !card.hidden);
+      section.hidden = visibleCards.length === 0;
+    }
+
+    const visibleCount = cards.filter((card) => !card.hidden).length;
+    const counter = $('#module-count');
+    if (counter) {
+      counter.textContent = `${visibleCount} module${visibleCount > 1 ? 's' : ''} disponible${visibleCount > 1 ? 's' : ''}`;
+    }
+  }
+
+  async function init() {
+    const session = await api('/api/auth/session');
+    const user = session.user;
+    const permissions = Array.isArray(user.permissions) ? user.permissions : [];
+
+    $('#user-name').textContent = user.username;
+    $('#welcome-name').textContent = user.username;
+    $('#user-grade').textContent = user.grade;
+    $('#stat-matricule').textContent = user.matricule;
+    $('#stat-grade').textContent = user.grade;
+    $('#stat-department').textContent = user.department;
+    $('#user-avatar').src = user.avatarUrl || '/assets/logos/abyss-nexus-logo.png';
+
+    applyModulePermissions(permissions);
+
+    try {
+      const notifications = await api('/api/notification-center');
+      $('#stat-notifications').textContent = notifications.unreadCount;
+      const badge = $('#notification-count');
+      badge.hidden = notifications.unreadCount === 0;
+      badge.textContent = notifications.unreadCount > 99 ? '99+' : notifications.unreadCount;
+    } catch (error) {
+      console.warn('Notifications indisponibles :', error);
+      $('#stat-notifications').textContent = '—';
+    }
+  }
+
+  init().catch((error) => {
+    console.error('Dashboard Abyss Nexus :', error);
+    location.assign('/');
+  });
+})();

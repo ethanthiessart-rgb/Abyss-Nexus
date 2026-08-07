@@ -2,40 +2,7 @@
 
 (() => {
   const NAVIGATION = [
-    { href: '/dashboard', label: 'Tableau de bord', permission: null },
-    { href: '/direction-dashboard', label: 'Dashboard Direction', permission: 'maintenance.manage' },
-    { href: '/employees', label: 'Dossiers employés', permission: 'personnel.view' },
-    { href: '/personnel', label: 'Gestion du personnel', permission: 'personnel.view' },
-    { href: '/planning', label: 'Planning', permission: 'personnel.view' },
-    { href: '/leave', label: 'Absences et congés', permission: null },
-    { href: '/evaluations', label: 'Évaluations', permission: 'personnel.view' },
-    { href: '/training', label: 'Formations', permission: 'personnel.view' },
-    { href: '/career', label: 'Carrière', permission: 'personnel.view' },
-    { href: '/sanctions-advanced', label: 'Sanctions avancées', permission: 'discipline.manage' },
-    { href: '/reports-advanced', label: 'Rapports avancés', permission: 'reports.create' },
-    { href: '/reports', label: 'Rapports classiques', permission: 'reports.create' },
-    { href: '/mail', label: 'Messagerie classique', permission: null },
-    { href: '/chat', label: 'Chat interne', permission: null },
-    { href: '/announcements', label: 'Annonces', permission: null },
-    { href: '/communication-center', label: 'Centre de communication', permission: 'maintenance.manage' },
-    { href: '/documents', label: 'Documents', permission: null },
-    { href: '/document-library', label: 'Bibliothèque documentaire', permission: null },
-    { href: '/discipline', label: 'Mes sanctions', permission: null },
-    { href: '/statistics', label: 'Statistiques', permission: null },
-    { href: '/analytics-center', label: 'Statistiques avancées', permission: 'maintenance.manage' },
-    { href: '/permissions', label: 'Permissions', permission: 'permissions.manage' },
-    { href: '/admin-center', label: 'Administration avancée', permission: 'permissions.manage' },
-    { href: '/departments', label: 'Départements', permission: 'permissions.manage' },
-    { href: '/audit', label: 'Journal d’audit', permission: 'maintenance.manage' },
-    { href: '/archives', label: 'Archives', permission: 'maintenance.manage' },
-    { href: '/system', label: 'Centre système', permission: 'maintenance.manage' },
-    { href: '/global-settings', label: 'Configuration globale', permission: 'maintenance.manage' },
-    { href: '/maintenance', label: 'Maintenance', permission: 'maintenance.manage' },
-    { href: '/backups', label: 'Sauvegardes', permission: 'maintenance.manage' },
-    { href: '/realtime-notifications', label: 'Notifications en direct', permission: null },
-    { href: '/notifications', label: 'Historique notifications', permission: null },
-    { href: '/settings', label: 'Paramètres', permission: null },
-    { href: '/about', label: 'À propos / Version 1.0', permission: null }
+    { href: '/dashboard', label: 'Tableau de bord', permission: null }
   ];
 
   async function json(url, options = {}) {

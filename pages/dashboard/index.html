@@ -1,1 +1,175 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Abyss Nexus — Tableau de bord</title><link rel="stylesheet" href="/css/core.css"><link rel="stylesheet" href="/css/dashboard.css"></head><body><div class="dashboard-shell"><aside class="sidebar"><div class="sidebar-brand"><img src="/assets/logos/abyss-nexus-logo.png" alt=""><div><strong>ABYSS NEXUS</strong><span>Staff Management System</span></div></div><nav class="sidebar-nav"><a class="nav-item is-active" href="/dashboard">Tableau de bord</a><a id="personnel-link" class="nav-item" href="/personnel">Personnel</a><a id="permissions-link" class="nav-item" href="/permissions">Permissions</a><a class="nav-item" href="/reports">Rapports</a><a class="nav-item" href="/mail">Messagerie</a><a class="nav-item" href="/announcements">Annonces</a><a class="nav-item" href="/documents">Documents</a><a class="nav-item" href="/discipline">Mes sanctions</a><a id="audit-link" class="nav-item" href="/audit">Journal d’audit</a><a class="nav-item" href="/notifications">Notifications</a></nav><div class="sidebar-footer"><span>Core v1.0</span><button id="logout-button" class="logout-button">Se déconnecter</button></div></aside><main class="main-panel"><header class="topbar"><div><p class="topbar-kicker">CENTRE DE COMMANDEMENT</p><h1>Tableau de bord</h1></div><div class="topbar-actions"><a class="notification-button" href="/notifications">🔔<span id="notification-count" class="notification-count" hidden>0</span></a><div class="user-chip"><img id="user-avatar" src="/assets/logos/abyss-nexus-logo.png" alt=""><div><strong id="user-name">Chargement...</strong><span id="user-grade">Utilisateur</span></div></div></div></header><section class="welcome-card"><div><p class="eyebrow">AUTHENTIFICATION RÉUSSIE</p><h2>Bienvenue, <span id="welcome-name">membre du personnel</span>.</h2><p>Votre session sécurisée Abyss Nexus est active.</p></div><div class="security-badge"><span>SESSION</span><strong>SÉCURISÉE</strong></div></section><section class="stats-grid"><article class="stat-card"><span>Matricule</span><strong id="stat-matricule">—</strong></article><article class="stat-card"><span>Grade</span><strong id="stat-grade">—</strong></article><article class="stat-card"><span>Département</span><strong id="stat-department">—</strong></article><article class="stat-card"><span>Notifications</span><strong id="stat-notifications">0</strong></article></section><section class="content-grid"><article class="panel-card"><header><div><p class="panel-kicker">ADMINISTRATION</p><h3>Centres de contrôle</h3></div></header><div class="module-grid"><a id="permissions-module" class="module-card" href="/permissions"><span class="module-icon">🛡️</span><strong>Permissions</strong><small>Gérer les autorisations individuelles</small></a><a id="audit-module" class="module-card" href="/audit"><span class="module-icon">📜</span><strong>Journal d’audit</strong><small>Consulter les actions enregistrées</small></a><a class="module-card" href="/notifications"><span class="module-icon">🔔</span><strong>Notifications</strong><small>Voir l’historique complet</small></a></div></article></section></main></div><div id="toast" class="toast"></div><script src="/js/dashboard/dashboard.js" defer></script></body></html>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Abyss Nexus — Tableau de bord</title>
+  <link rel="stylesheet" href="/css/core.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <img src="/assets/logos/abyss-nexus-logo.png" alt="Logo Abyss Nexus">
+        <div>
+          <strong>ABYSS NEXUS</strong>
+          <span>Staff Management System</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Navigation principale">
+        <a class="nav-item is-active" href="/dashboard">Tableau de bord</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span>Core v1.0</span>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div>
+          <p class="topbar-kicker">CENTRE DE COMMANDEMENT</p>
+          <h1>Tableau de bord</h1>
+        </div>
+
+        <div class="topbar-actions">
+          <a class="notification-button" href="/notifications" title="Notifications" aria-label="Notifications">
+            🔔
+            <span id="notification-count" class="notification-count" hidden>0</span>
+          </a>
+
+          <div class="user-chip">
+            <img id="user-avatar" src="/assets/logos/abyss-nexus-logo.png" alt="Avatar">
+            <div>
+              <strong id="user-name">Chargement...</strong>
+              <span id="user-grade">Utilisateur</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="welcome-card">
+        <div>
+          <p class="eyebrow">AUTHENTIFICATION RÉUSSIE</p>
+          <h2>Bienvenue, <span id="welcome-name">membre du personnel</span>.</h2>
+          <p>Votre session sécurisée Abyss Nexus est active.</p>
+        </div>
+        <div class="security-badge">
+          <span>SESSION</span>
+          <strong>SÉCURISÉE</strong>
+        </div>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card"><span>Matricule</span><strong id="stat-matricule">—</strong></article>
+        <article class="stat-card"><span>Grade</span><strong id="stat-grade">—</strong></article>
+        <article class="stat-card"><span>Département</span><strong id="stat-department">—</strong></article>
+        <article class="stat-card"><span>Notifications</span><strong id="stat-notifications">0</strong></article>
+      </section>
+
+      <section class="dashboard-modules" aria-labelledby="modules-title">
+        <div class="modules-heading">
+          <div>
+            <p class="panel-kicker">NAVIGATION CENTRALE</p>
+            <h2 id="modules-title">Accès aux modules</h2>
+            <p>Choisissez directement la catégorie que vous souhaitez ouvrir.</p>
+          </div>
+          <span id="module-count" class="module-count">— modules disponibles</span>
+        </div>
+
+        <div class="module-section" data-section="direction">
+          <header class="module-section-header">
+            <span class="section-icon">👑</span>
+            <div><strong>Direction & administration</strong><small>Outils de pilotage et de contrôle</small></div>
+          </header>
+          <div class="module-grid module-grid-wide">
+            <a class="module-card" href="/direction-dashboard" data-permission="maintenance.manage"><span class="module-icon">📊</span><strong>Dashboard Direction</strong><small>Vue stratégique de la Direction</small></a>
+            <a class="module-card" href="/permissions" data-permission="permissions.manage"><span class="module-icon">🛡️</span><strong>Permissions</strong><small>Gérer les autorisations individuelles</small></a>
+            <a class="module-card" href="/admin-center" data-permission="permissions.manage"><span class="module-icon">⚙️</span><strong>Administration avancée</strong><small>Centre d’administration du portail</small></a>
+            <a class="module-card" href="/departments" data-permission="permissions.manage"><span class="module-icon">🏢</span><strong>Départements</strong><small>Configurer l’organisation interne</small></a>
+            <a class="module-card" href="/audit" data-permission="maintenance.manage"><span class="module-icon">📜</span><strong>Journal d’audit</strong><small>Consulter les actions enregistrées</small></a>
+            <a class="module-card" href="/archives" data-permission="maintenance.manage"><span class="module-icon">🗄️</span><strong>Archives</strong><small>Consulter les éléments archivés</small></a>
+          </div>
+        </div>
+
+        <div class="module-section" data-section="personnel">
+          <header class="module-section-header">
+            <span class="section-icon">👥</span>
+            <div><strong>Personnel & ressources humaines</strong><small>Suivi et gestion de l’équipe</small></div>
+          </header>
+          <div class="module-grid module-grid-wide">
+            <a class="module-card" href="/employees" data-permission="personnel.view"><span class="module-icon">🗂️</span><strong>Dossiers employés</strong><small>Consulter les dossiers du personnel</small></a>
+            <a class="module-card" href="/personnel" data-permission="personnel.view"><span class="module-icon">👤</span><strong>Gestion du personnel</strong><small>Créer et administrer les comptes</small></a>
+            <a class="module-card" href="/planning" data-permission="personnel.view"><span class="module-icon">📅</span><strong>Planning</strong><small>Organisation et planification</small></a>
+            <a class="module-card" href="/leave"><span class="module-icon">🏖️</span><strong>Absences et congés</strong><small>Suivre les demandes et absences</small></a>
+            <a class="module-card" href="/evaluations" data-permission="personnel.view"><span class="module-icon">⭐</span><strong>Évaluations</strong><small>Évaluer et suivre les membres</small></a>
+            <a class="module-card" href="/training" data-permission="personnel.view"><span class="module-icon">🎓</span><strong>Formations</strong><small>Parcours et suivi des formations</small></a>
+            <a class="module-card" href="/career" data-permission="personnel.view"><span class="module-icon">📈</span><strong>Carrière</strong><small>Évolution et historique professionnel</small></a>
+          </div>
+        </div>
+
+        <div class="module-section" data-section="operations">
+          <header class="module-section-header">
+            <span class="section-icon">📋</span>
+            <div><strong>Rapports & discipline</strong><small>Rapports, suivi et sanctions</small></div>
+          </header>
+          <div class="module-grid module-grid-wide">
+            <a class="module-card" href="/sanctions-advanced" data-permission="discipline.manage"><span class="module-icon">⚖️</span><strong>Sanctions avancées</strong><small>Gestion disciplinaire avancée</small></a>
+            <a class="module-card" href="/discipline"><span class="module-icon">🧾</span><strong>Mes sanctions</strong><small>Consulter votre historique disciplinaire</small></a>
+            <a class="module-card" href="/reports-advanced" data-permission="reports.create"><span class="module-icon">📑</span><strong>Rapports avancés</strong><small>Workflow avancé de rapports</small></a>
+            <a class="module-card" href="/reports" data-permission="reports.create"><span class="module-icon">📝</span><strong>Rapports classiques</strong><small>Créer et consulter les rapports</small></a>
+          </div>
+        </div>
+
+        <div class="module-section" data-section="communication">
+          <header class="module-section-header">
+            <span class="section-icon">💬</span>
+            <div><strong>Communication</strong><small>Échanges et diffusion interne</small></div>
+          </header>
+          <div class="module-grid module-grid-wide">
+            <a class="module-card" href="/mail"><span class="module-icon">✉️</span><strong>Messagerie classique</strong><small>Messages internes</small></a>
+            <a class="module-card" href="/chat"><span class="module-icon">💬</span><strong>Chat interne</strong><small>Discussions entre membres</small></a>
+            <a class="module-card" href="/announcements"><span class="module-icon">📢</span><strong>Annonces</strong><small>Informations et annonces officielles</small></a>
+            <a class="module-card" href="/communication-center" data-permission="maintenance.manage"><span class="module-icon">📡</span><strong>Centre de communication</strong><small>Gestion avancée des communications</small></a>
+            <a class="module-card" href="/notifications"><span class="module-icon">🔔</span><strong>Historique notifications</strong><small>Consulter toutes les notifications</small></a>
+            <a class="module-card" href="/realtime-notifications"><span class="module-icon">⚡</span><strong>Notifications en direct</strong><small>Centre des alertes temps réel</small></a>
+          </div>
+        </div>
+
+        <div class="module-section" data-section="documents">
+          <header class="module-section-header">
+            <span class="section-icon">📁</span>
+            <div><strong>Documents & données</strong><small>Bibliothèque et statistiques</small></div>
+          </header>
+          <div class="module-grid module-grid-wide">
+            <a class="module-card" href="/documents"><span class="module-icon">📄</span><strong>Documents</strong><small>Importer et partager les documents</small></a>
+            <a class="module-card" href="/document-library"><span class="module-icon">📚</span><strong>Bibliothèque documentaire</strong><small>Explorer la documentation interne</small></a>
+            <a class="module-card" href="/statistics"><span class="module-icon">📊</span><strong>Statistiques</strong><small>Indicateurs généraux du portail</small></a>
+            <a class="module-card" href="/analytics-center" data-permission="maintenance.manage"><span class="module-icon">📈</span><strong>Statistiques avancées</strong><small>Analyses et indicateurs Direction</small></a>
+          </div>
+        </div>
+
+        <div class="module-section" data-section="system">
+          <header class="module-section-header">
+            <span class="section-icon">🖥️</span>
+            <div><strong>Système & configuration</strong><small>Maintenance et paramètres du portail</small></div>
+          </header>
+          <div class="module-grid module-grid-wide">
+            <a class="module-card" href="/system" data-permission="maintenance.manage"><span class="module-icon">🖥️</span><strong>Centre système</strong><small>État et outils du système</small></a>
+            <a class="module-card" href="/global-settings" data-permission="maintenance.manage"><span class="module-icon">🌐</span><strong>Configuration globale</strong><small>Paramètres communs à Abyss Nexus</small></a>
+            <a class="module-card" href="/maintenance" data-permission="maintenance.manage"><span class="module-icon">🛠️</span><strong>Maintenance</strong><small>État du portail et accès d’urgence</small></a>
+            <a class="module-card" href="/backups" data-permission="maintenance.manage"><span class="module-icon">💾</span><strong>Sauvegardes</strong><small>Gestion des sauvegardes</small></a>
+            <a class="module-card" href="/settings"><span class="module-icon">🎛️</span><strong>Paramètres</strong><small>Préférences de votre compte</small></a>
+            <a class="module-card" href="/about"><span class="module-icon">ℹ️</span><strong>À propos / Version 1.0</strong><small>Informations sur Abyss Nexus</small></a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="/js/dashboard/dashboard.js" defer></script>
+</body>
+</html>
