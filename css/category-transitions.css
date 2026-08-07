@@ -1,0 +1,220 @@
+/* Abyss Nexus — Category Transition Engine */
+.anx-transition-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: all;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(40, 151, 221, .13), transparent 32rem),
+    #04090f;
+  color: #f4f9fc;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .15s ease;
+}
+
+.anx-transition-layer.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.anx-transition-shell {
+  width: min(760px, calc(100vw - 36px));
+  text-align: center;
+}
+
+.anx-transition-logo {
+  width: 92px;
+  height: 92px;
+  margin: 0 auto 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  animation: anx-logo-spin 2.8s linear infinite;
+  filter: drop-shadow(0 0 18px rgba(55, 171, 242, .28));
+}
+
+.anx-transition-kicker {
+  margin: 0 0 10px;
+  color: #6fc6fb;
+  font-size: .74rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+.anx-transition-title {
+  margin: 0;
+  font-size: clamp(1.35rem, 4vw, 2.25rem);
+  letter-spacing: .06em;
+}
+
+.anx-transition-status {
+  min-height: 28px;
+  margin: 17px 0 0;
+  color: #a8bbc9;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: .9rem;
+}
+
+.anx-progress {
+  width: min(520px, 88%);
+  height: 5px;
+  margin: 24px auto 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+}
+
+.anx-progress > span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #1a79b9, #5bc3ff);
+  animation: anx-progress 1.05s cubic-bezier(.2,.8,.2,1) forwards;
+}
+
+.anx-scanline {
+  position: absolute;
+  inset-inline: 0;
+  top: -20%;
+  height: 18%;
+  opacity: .18;
+  background: linear-gradient(transparent, rgba(100, 205, 255, .4), transparent);
+  animation: anx-scan 1s linear infinite;
+}
+
+.anx-corners::before,
+.anx-corners::after {
+  content: "";
+  position: absolute;
+  width: 170px;
+  height: 170px;
+  border-color: rgba(70, 177, 241, .28);
+}
+
+.anx-corners::before {
+  top: 26px;
+  left: 26px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+.anx-corners::after {
+  right: 26px;
+  bottom: 26px;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+}
+
+/* Personnel — registry scan */
+.anx-transition-layer[data-theme="personnel"] .anx-transition-logo {
+  animation: anx-pulse .75s ease-in-out infinite alternate;
+}
+.anx-transition-layer[data-theme="personnel"] .anx-transition-shell {
+  animation: anx-rise .45s ease both;
+}
+
+/* Discipline — red security pulse */
+.anx-transition-layer[data-theme="discipline"] {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(255,70,82,.025) 32px),
+    radial-gradient(circle at 50% 42%, rgba(190, 30, 46, .18), transparent 30rem),
+    #080508;
+}
+.anx-transition-layer[data-theme="discipline"] .anx-transition-kicker {
+  color: #ff8491;
+}
+.anx-transition-layer[data-theme="discipline"] .anx-progress > span {
+  background: linear-gradient(90deg, #8d1626, #ff6476);
+}
+
+/* Documents / archives — decrypt grid */
+.anx-transition-layer[data-theme="archives"] {
+  background:
+    linear-gradient(rgba(47,178,226,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47,178,226,.03) 1px, transparent 1px),
+    #030a0f;
+  background-size: 30px 30px;
+}
+.anx-transition-layer[data-theme="archives"] .anx-transition-shell {
+  animation: anx-decrypt .55s steps(5,end) both;
+}
+
+/* Maintenance/system — terminal */
+.anx-transition-layer[data-theme="system"] .anx-transition-shell {
+  text-align: left;
+  border: 1px solid rgba(93, 194, 250, .18);
+  border-radius: 14px;
+  padding: 28px;
+  background: rgba(2, 9, 14, .82);
+}
+.anx-transition-layer[data-theme="system"] .anx-transition-logo {
+  display: none;
+}
+.anx-transition-layer[data-theme="system"] .anx-transition-title {
+  font-family: Consolas, "Courier New", monospace;
+}
+
+/* Direction — gate opening */
+.anx-gate-left,
+.anx-gate-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50.5%;
+  z-index: 2;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.025), transparent),
+    #07111a;
+  transition: transform .62s cubic-bezier(.7,0,.2,1);
+}
+.anx-gate-left { left: 0; border-right: 1px solid rgba(71,174,235,.3); }
+.anx-gate-right { right: 0; border-left: 1px solid rgba(71,174,235,.3); }
+.anx-transition-layer[data-theme="direction"].gate-open .anx-gate-left {
+  transform: translateX(-100%);
+}
+.anx-transition-layer[data-theme="direction"].gate-open .anx-gate-right {
+  transform: translateX(100%);
+}
+.anx-transition-layer[data-theme="direction"] .anx-transition-shell {
+  position: relative;
+  z-index: 3;
+}
+
+/* Communication — signal wave */
+.anx-transition-layer[data-theme="communication"] .anx-transition-logo {
+  animation: anx-signal 1s ease-out infinite;
+}
+
+/* Planning/career/training — clean slide */
+.anx-transition-layer[data-theme="operations"] .anx-transition-shell {
+  animation: anx-slide .5s cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes anx-progress { to { width: 100%; } }
+@keyframes anx-logo-spin { to { transform: rotate(360deg); } }
+@keyframes anx-pulse { from { transform: scale(.96); opacity: .72; } to { transform: scale(1.04); opacity: 1; } }
+@keyframes anx-rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes anx-slide { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes anx-decrypt {
+  0% { opacity: 0; filter: blur(5px); transform: scale(.985); }
+  50% { opacity: .7; filter: blur(2px); }
+  100% { opacity: 1; filter: none; transform: none; }
+}
+@keyframes anx-scan { to { transform: translateY(720%); } }
+@keyframes anx-signal {
+  0% { box-shadow: 0 0 0 0 rgba(65,181,246,.32); }
+  100% { box-shadow: 0 0 0 34px rgba(65,181,246,0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anx-transition-layer *,
+  .anx-transition-layer *::before,
+  .anx-transition-layer *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
