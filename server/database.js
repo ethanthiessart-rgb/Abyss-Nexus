@@ -4,17 +4,99 @@ const fs = require('node:fs');
 const path = require('node:path');
 const initSqlJs = require('sql.js');
 const bcrypt = require('bcryptjs');
+const { Pool } = require('pg');
 
 const DATABASE_DIR = path.join(__dirname, '..', 'database');
 const DATABASE_FILE = path.join(DATABASE_DIR, 'abyss-nexus.sqlite');
 
 let dbPromise;
 let database;
+let neonPool = null;
+let pendingNeonSnapshot = null;
+let neonFlushRunning = false;
+
+function neonEnabled() {
+  return Boolean(process.env.DATABASE_URL);
+}
+
+async function initializeNeonSnapshotStore() {
+  if (!neonEnabled()) return null;
+
+  neonPool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+    max: 2
+  });
+
+  await neonPool.query(`
+    CREATE TABLE IF NOT EXISTS abyss_nexus_sqlite_snapshot (
+      id INTEGER PRIMARY KEY,
+      sqlite_blob BYTEA NOT NULL,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
+
+  return neonPool;
+}
+
+async function loadSnapshotFromNeon() {
+  if (!neonPool) return null;
+
+  const result = await neonPool.query(
+    'SELECT sqlite_blob FROM abyss_nexus_sqlite_snapshot WHERE id = 1'
+  );
+
+  if (!result.rows.length || !result.rows[0].sqlite_blob) return null;
+
+  return Buffer.from(result.rows[0].sqlite_blob);
+}
+
+async function writeSnapshotToNeon(buffer) {
+  if (!neonPool || !buffer) return;
+
+  await neonPool.query(
+    `INSERT INTO abyss_nexus_sqlite_snapshot (id, sqlite_blob, updated_at)
+     VALUES (1, $1, NOW())
+     ON CONFLICT (id)
+     DO UPDATE SET sqlite_blob = EXCLUDED.sqlite_blob, updated_at = NOW()`,
+    [buffer]
+  );
+}
+
+function queueNeonSnapshot(buffer) {
+  if (!neonPool || !buffer) return;
+
+  pendingNeonSnapshot = Buffer.from(buffer);
+
+  if (neonFlushRunning) return;
+  neonFlushRunning = true;
+
+  (async () => {
+    try {
+      while (pendingNeonSnapshot) {
+        const snapshot = pendingNeonSnapshot;
+        pendingNeonSnapshot = null;
+        await writeSnapshotToNeon(snapshot);
+      }
+    } catch (error) {
+      console.error('Impossible de sauvegarder la base Abyss Nexus dans Neon :', error);
+    } finally {
+      neonFlushRunning = false;
+      if (pendingNeonSnapshot) queueNeonSnapshot(pendingNeonSnapshot);
+    }
+  })();
+}
 
 function persistDatabase() {
   if (!database) return;
+
+  const snapshot = Buffer.from(database.export());
+
   fs.mkdirSync(DATABASE_DIR, { recursive: true });
-  fs.writeFileSync(DATABASE_FILE, Buffer.from(database.export()));
+  fs.writeFileSync(DATABASE_FILE, snapshot);
+
+  // Render possède un disque local éphémère. Neon devient donc la copie durable.
+  queueNeonSnapshot(snapshot);
 }
 
 function one(sql, params = []) {
@@ -84,8 +166,30 @@ async function initializeDatabase() {
     const SQL = await initSqlJs();
     fs.mkdirSync(DATABASE_DIR, { recursive: true });
 
-    database = fs.existsSync(DATABASE_FILE)
-      ? new SQL.Database(fs.readFileSync(DATABASE_FILE))
+    let initialBuffer = null;
+
+    if (neonEnabled()) {
+      try {
+        await initializeNeonSnapshotStore();
+        initialBuffer = await loadSnapshotFromNeon();
+
+        if (initialBuffer) {
+          console.log('Base Abyss Nexus restaurée depuis Neon.');
+        }
+      } catch (error) {
+        console.error(
+          'Neon indisponible au démarrage, utilisation du stockage local :',
+          error
+        );
+      }
+    }
+
+    if (!initialBuffer && fs.existsSync(DATABASE_FILE)) {
+      initialBuffer = fs.readFileSync(DATABASE_FILE);
+    }
+
+    database = initialBuffer
+      ? new SQL.Database(initialBuffer)
       : new SQL.Database();
 
     database.run(`
@@ -305,6 +409,19 @@ async function initializeDatabase() {
 
     persistDatabase();
     await createInitialDirectionAccount();
+
+    // Après les migrations / compte initial, on force une copie durable.
+    persistDatabase();
+
+    if (neonPool) {
+      try {
+        await writeSnapshotToNeon(Buffer.from(database.export()));
+        console.log('Persistance Neon active pour Abyss Nexus.');
+      } catch (error) {
+        console.error('Impossible de finaliser la sauvegarde Neon :', error);
+      }
+    }
+
     return { one, all, run };
   })();
 
