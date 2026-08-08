@@ -14,6 +14,9 @@ let database;
 let neonPool = null;
 let pendingNeonSnapshot = null;
 let neonFlushRunning = false;
+let databaseDirty = false;
+let autoPersistenceTimer = null;
+let shutdownHookInstalled = false;
 
 function neonEnabled() {
   return Boolean(process.env.DATABASE_URL);
@@ -29,12 +32,14 @@ async function initializeNeonSnapshotStore() {
   });
 
   await neonPool.query(`
-    CREATE TABLE IF NOT EXISTS abyss_nexus_sqlite_snapshot (
+    CREATE TABLE IF NOT EXISTS abyss_nexus_sqlite_snapshot_v2 (
       id INTEGER PRIMARY KEY,
       sqlite_blob BYTEA NOT NULL,
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `);
+
+  console.log('Stockage persistant Neon V2 prêt.');
 
   return neonPool;
 }
@@ -43,19 +48,24 @@ async function loadSnapshotFromNeon() {
   if (!neonPool) return null;
 
   const result = await neonPool.query(
-    'SELECT sqlite_blob FROM abyss_nexus_sqlite_snapshot WHERE id = 1'
+    'SELECT sqlite_blob, updated_at FROM abyss_nexus_sqlite_snapshot_v2 WHERE id = 1'
   );
 
   if (!result.rows.length || !result.rows[0].sqlite_blob) return null;
 
-  return Buffer.from(result.rows[0].sqlite_blob);
+  return {
+    buffer: Buffer.from(result.rows[0].sqlite_blob),
+    updatedAt: result.rows[0].updated_at
+      ? new Date(result.rows[0].updated_at)
+      : null
+  };
 }
 
 async function writeSnapshotToNeon(buffer) {
   if (!neonPool || !buffer) return;
 
   await neonPool.query(
-    `INSERT INTO abyss_nexus_sqlite_snapshot (id, sqlite_blob, updated_at)
+    `INSERT INTO abyss_nexus_sqlite_snapshot_v2 (id, sqlite_blob, updated_at)
      VALUES (1, $1, NOW())
      ON CONFLICT (id)
      DO UPDATE SET sqlite_blob = EXCLUDED.sqlite_blob, updated_at = NOW()`,
@@ -95,7 +105,9 @@ function persistDatabase() {
   fs.mkdirSync(DATABASE_DIR, { recursive: true });
   fs.writeFileSync(DATABASE_FILE, snapshot);
 
-  // Render possède un disque local éphémère. Neon devient donc la copie durable.
+  databaseDirty = true;
+
+  // Envoi immédiat en arrière-plan + filet de sécurité périodique.
   queueNeonSnapshot(snapshot);
 }
 
@@ -110,6 +122,45 @@ async function persistDatabaseNow() {
   if (neonPool) {
     await writeSnapshotToNeon(snapshot);
   }
+
+  databaseDirty = false;
+}
+
+function installPersistenceSafetyNet() {
+  if (autoPersistenceTimer) return;
+
+  // Toutes les 2 secondes, on confirme la dernière version dans Neon.
+  autoPersistenceTimer = setInterval(() => {
+    if (!databaseDirty || !database || !neonPool) return;
+
+    persistDatabaseNow().catch((error) => {
+      console.error('Sauvegarde périodique Neon impossible :', error);
+    });
+  }, 2000);
+
+  autoPersistenceTimer.unref?.();
+
+  if (shutdownHookInstalled) return;
+  shutdownHookInstalled = true;
+
+  const flushAndExit = async (signal) => {
+    try {
+      if (database && neonPool) {
+        await persistDatabaseNow();
+        console.log(`Dernière sauvegarde Neon confirmée avant ${signal}.`);
+      }
+    } catch (error) {
+      console.error(`Échec sauvegarde finale Neon avant ${signal} :`, error);
+    } finally {
+      try {
+        await neonPool?.end();
+      } catch {}
+      process.exit(0);
+    }
+  };
+
+  process.once('SIGTERM', () => flushAndExit('SIGTERM'));
+  process.once('SIGINT', () => flushAndExit('SIGINT'));
 }
 
 function one(sql, params = []) {
@@ -184,10 +235,30 @@ async function initializeDatabase() {
     if (neonEnabled()) {
       try {
         await initializeNeonSnapshotStore();
-        initialBuffer = await loadSnapshotFromNeon();
+        const neonSnapshot = await loadSnapshotFromNeon();
 
-        if (initialBuffer) {
-          console.log('Base Abyss Nexus restaurée depuis Neon.');
+        if (neonSnapshot?.buffer) {
+          const localExists = fs.existsSync(DATABASE_FILE);
+          const localModifiedAt = localExists
+            ? fs.statSync(DATABASE_FILE).mtime
+            : null;
+
+          // Sur le PC, on évite qu'une vieille sauvegarde Neon écrase une base
+          // locale plus récente. Sur Render, le fichier local n'existe normalement
+          // pas au démarrage, donc Neon reste la source durable.
+          const localIsNewer =
+            localModifiedAt &&
+            neonSnapshot.updatedAt &&
+            localModifiedAt > neonSnapshot.updatedAt;
+
+          if (!localIsNewer) {
+            initialBuffer = neonSnapshot.buffer;
+            console.log('Base Abyss Nexus restaurée depuis Neon.');
+          } else {
+            console.log(
+              'Base locale plus récente que Neon : conservation de la version locale.'
+            );
+          }
         }
       } catch (error) {
         console.error(
@@ -430,6 +501,7 @@ async function initializeDatabase() {
       try {
         await writeSnapshotToNeon(Buffer.from(database.export()));
         console.log('Persistance Neon active pour Abyss Nexus.');
+        installPersistenceSafetyNet();
       } catch (error) {
         console.error('Impossible de finaliser la sauvegarde Neon :', error);
       }
