@@ -63,6 +63,7 @@ function registerPersonnelRoutes(app) {
       SELECT u.*, sp.signature, sp.force_password_change
       FROM users u
       LEFT JOIN staff_profiles sp ON sp.user_id = u.id
+      WHERE u.status != 'archived'
       ORDER BY
         CASE WHEN u.account_type = 'direction' THEN 0 ELSE 1 END,
         u.discord_username COLLATE NOCASE
@@ -296,59 +297,6 @@ function registerPersonnelRoutes(app) {
       );
 
       res.json({ ok: true, message: 'Mot de passe réinitialisé.' });
-    }
-  );
-
-
-  app.delete(
-    '/api/personnel/:id',
-    requirePermission('personnel.edit'),
-    async (req, res) => {
-      const userId = Number(req.params.id);
-      const actorId = Number(req.session.user.id);
-      const { one, run, persistDatabaseNow } = getDatabaseHelpers();
-
-      if (!Number.isInteger(userId) || userId <= 0) {
-        return res.status(400).json({ ok: false, message: 'Identifiant employé invalide.' });
-      }
-      if (userId === actorId) {
-        return res.status(400).json({ ok: false, message: 'Vous ne pouvez pas supprimer votre propre compte.' });
-      }
-
-      const target = one(
-        `SELECT id, matricule, discord_username, account_type FROM users WHERE id = ?`,
-        [userId]
-      );
-      if (!target) {
-        return res.status(404).json({ ok: false, message: 'Employé introuvable.' });
-      }
-      if (target.account_type === 'direction' && target.matricule === 'ABY-DIR-0001') {
-        return res.status(403).json({ ok: false, message: 'Le compte Direction principal est protégé.' });
-      }
-
-      const announcement = one('SELECT id FROM announcements WHERE author_id = ? LIMIT 1', [userId]);
-      const document = one('SELECT id FROM documents WHERE uploader_id = ? LIMIT 1', [userId]);
-      if (announcement || document) {
-        return res.status(409).json({
-          ok: false,
-          message: 'Ce compte possède encore des annonces ou documents. Réattribuez-les avant la suppression.'
-        });
-      }
-
-      run('UPDATE audit_logs SET user_id = NULL WHERE user_id = ?', [userId]);
-      run('UPDATE personnel_history SET actor_user_id = NULL WHERE actor_user_id = ?', [userId]);
-      run('UPDATE staff_profiles SET created_by_user_id = NULL WHERE created_by_user_id = ?', [userId]);
-      run('UPDATE maintenance_settings SET updated_by_user_id = NULL WHERE updated_by_user_id = ?', [userId]);
-      run('UPDATE global_settings SET updated_by_user_id = NULL WHERE updated_by_user_id = ?', [userId]);
-      run('UPDATE global_settings_history SET changed_by_user_id = NULL WHERE changed_by_user_id = ?', [userId]);
-
-      run('DELETE FROM users WHERE id = ?', [userId]);
-      await persistDatabaseNow();
-
-      res.json({
-        ok: true,
-        message: `Compte ${target.discord_username} (${target.matricule}) supprimé définitivement.`
-      });
     }
   );
 
