@@ -616,7 +616,7 @@ function registerMaintenanceRoutes(app) {
   app.put(
     '/api/maintenance',
     requirePermission('maintenance.manage'),
-    (req, res) => {
+    async (req, res) => {
       const modes = new Set([
         'operational',
         'minor_bug',
@@ -645,7 +645,7 @@ function registerMaintenanceRoutes(app) {
         return res.status(400).json({ ok: false, message: "Code d'alerte invalide." });
       }
 
-      const { run } = getDatabaseHelpers();
+      const { run, persistDatabaseNow } = getDatabaseHelpers();
 
       run(`
         INSERT INTO maintenance_settings (
@@ -690,9 +690,22 @@ function registerMaintenanceRoutes(app) {
 
       loadMaintenanceState();
 
+      try {
+        // On ne répond "sauvegardé" qu'après confirmation de la copie durable Neon.
+        await persistDatabaseNow();
+      } catch (error) {
+        console.error("Impossible de confirmer la sauvegarde durable de l'état du portail :", error);
+
+        return res.status(503).json({
+          ok: false,
+          message:
+            "L'état a été modifié localement, mais la sauvegarde permanente Neon a échoué. Réessayez avant de redémarrer Render."
+        });
+      }
+
       res.json({
         ok: true,
-        message: 'État du portail mis à jour.',
+        message: 'État du portail sauvegardé durablement.',
         state: cachedState
       });
     }

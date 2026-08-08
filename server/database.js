@@ -99,6 +99,19 @@ function persistDatabase() {
   queueNeonSnapshot(snapshot);
 }
 
+async function persistDatabaseNow() {
+  if (!database) return;
+
+  const snapshot = Buffer.from(database.export());
+
+  fs.mkdirSync(DATABASE_DIR, { recursive: true });
+  fs.writeFileSync(DATABASE_FILE, snapshot);
+
+  if (neonPool) {
+    await writeSnapshotToNeon(snapshot);
+  }
+}
+
 function one(sql, params = []) {
   const statement = database.prepare(sql);
   try {
@@ -434,6 +447,6 @@ module.exports = {
     if (!database) {
       throw new Error('La base de données n’est pas initialisée.');
     }
-    return { one, all, run };
+    return { one, all, run, persistDatabaseNow };
   }
 };
