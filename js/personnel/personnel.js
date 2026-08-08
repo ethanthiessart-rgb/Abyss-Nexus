@@ -193,14 +193,14 @@
     const user = state.users.find((item) => item.id === state.selectedId);
     const label = user ? `${user.username} (${user.matricule})` : 'ce compte';
 
-    const firstConfirm = window.confirm(
-      `SUPPRESSION DÉFINITIVE\n\nVoulez-vous réellement supprimer ${label} ?\n\nCette action est irréversible.`
-    );
-    if (!firstConfirm) return;
+    if (!window.confirm(
+      `Voulez-vous supprimer définitivement ${label} ?\n\nCette action est irréversible.`
+    )) return;
 
     const typed = window.prompt(
-      `Dernière confirmation.\n\nTapez SUPPRIMER pour supprimer définitivement ${label}.`
+      `Tapez SUPPRIMER pour confirmer la suppression définitive de ${label}.`
     );
+
     if (typed !== 'SUPPRIMER') {
       showToast('Suppression annulée.');
       return;
@@ -220,6 +220,31 @@
     } catch (error) {
       showToast(error.message);
     }
+  }
+
+  function installDeleteButton() {
+    const resetSection = document.querySelector('.reset-section');
+    if (!resetSection || document.querySelector('#delete-account-button')) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.style.marginTop = '14px';
+
+    const button = document.createElement('button');
+    button.id = 'delete-account-button';
+    button.className = 'danger-action';
+    button.type = 'button';
+    button.textContent = '🗑️ Supprimer définitivement ce compte';
+    button.addEventListener('click', deleteAccount);
+
+    const note = document.createElement('p');
+    note.textContent = 'Cette action est irréversible.';
+    note.style.marginTop = '8px';
+    note.style.opacity = '.72';
+    note.style.fontSize = '.9rem';
+
+    wrapper.appendChild(button);
+    resetSection.appendChild(wrapper);
+    resetSection.appendChild(note);
   }
 
   async function discordLookup() {
@@ -274,6 +299,7 @@
   }
 
   async function init() {
+    installDeleteButton();
     try {
       const meta = await api('/api/personnel/meta');
       state.departments = meta.departments;
@@ -304,7 +330,6 @@
   $('#edit-form').addEventListener('submit', saveEdit);
   $('#save-permissions').addEventListener('click', savePermissions);
   $('#reset-password-button').addEventListener('click', resetPassword);
-  $('#delete-account-button')?.addEventListener('click', deleteAccount);
   $('#logout-button').addEventListener('click', async () => {
     const data = await api('/api/auth/logout', { method: 'POST' });
     location.assign(data.redirect || '/');

@@ -321,7 +321,8 @@ function registerPersonnelRoutes(app) {
 
       const target = one(
         `SELECT id, matricule, discord_username, account_type
-         FROM users WHERE id = ?`,
+         FROM users
+         WHERE id = ?`,
         [userId]
       );
 
@@ -329,27 +330,30 @@ function registerPersonnelRoutes(app) {
         return res.status(404).json({ ok: false, message: 'Employé introuvable.' });
       }
 
-      // Protection du compte Direction initial / principal.
       if (target.account_type === 'direction' && target.matricule === 'ABY-DIR-0001') {
         return res.status(403).json({
           ok: false,
-          message: 'Le compte Direction principal est protégé et ne peut pas être supprimé.'
+          message: 'Le compte Direction principal est protégé.'
         });
       }
 
-      // Ces contenus doivent rester attribués à leur auteur : on bloque la suppression
-      // plutôt que de détruire silencieusement des annonces ou documents.
-      const announcement = one('SELECT id FROM announcements WHERE author_id = ? LIMIT 1', [userId]);
-      const document = one('SELECT id FROM documents WHERE uploader_id = ? LIMIT 1', [userId]);
+      const announcement = one(
+        'SELECT id FROM announcements WHERE author_id = ? LIMIT 1',
+        [userId]
+      );
+      const document = one(
+        'SELECT id FROM documents WHERE uploader_id = ? LIMIT 1',
+        [userId]
+      );
 
       if (announcement || document) {
         return res.status(409).json({
           ok: false,
-          message: 'Ce compte possède encore des annonces ou documents. Réattribuez-les avant la suppression définitive.'
+          message:
+            'Ce compte possède encore des annonces ou documents. Réattribuez-les avant la suppression.'
         });
       }
 
-      // Les références historiques facultatives sont détachées avant suppression.
       run('UPDATE audit_logs SET user_id = NULL WHERE user_id = ?', [userId]);
       run('UPDATE personnel_history SET actor_user_id = NULL WHERE actor_user_id = ?', [userId]);
       run('UPDATE staff_profiles SET created_by_user_id = NULL WHERE created_by_user_id = ?', [userId]);
@@ -357,10 +361,8 @@ function registerPersonnelRoutes(app) {
       run('UPDATE global_settings SET updated_by_user_id = NULL WHERE updated_by_user_id = ?', [userId]);
       run('UPDATE global_settings_history SET changed_by_user_id = NULL WHERE changed_by_user_id = ?', [userId]);
 
-      // Les données directement rattachées au compte sont supprimées par ON DELETE CASCADE.
       run('DELETE FROM users WHERE id = ?', [userId]);
 
-      // Confirme immédiatement la nouvelle base dans Neon.
       await persistDatabaseNow();
 
       res.json({
