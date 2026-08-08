@@ -311,46 +311,27 @@ function registerPersonnelRoutes(app) {
       if (!Number.isInteger(userId) || userId <= 0) {
         return res.status(400).json({ ok: false, message: 'Identifiant employé invalide.' });
       }
-
       if (userId === actorId) {
-        return res.status(400).json({
-          ok: false,
-          message: 'Vous ne pouvez pas supprimer votre propre compte.'
-        });
+        return res.status(400).json({ ok: false, message: 'Vous ne pouvez pas supprimer votre propre compte.' });
       }
 
       const target = one(
-        `SELECT id, matricule, discord_username, account_type
-         FROM users
-         WHERE id = ?`,
+        `SELECT id, matricule, discord_username, account_type FROM users WHERE id = ?`,
         [userId]
       );
-
       if (!target) {
         return res.status(404).json({ ok: false, message: 'Employé introuvable.' });
       }
-
       if (target.account_type === 'direction' && target.matricule === 'ABY-DIR-0001') {
-        return res.status(403).json({
-          ok: false,
-          message: 'Le compte Direction principal est protégé.'
-        });
+        return res.status(403).json({ ok: false, message: 'Le compte Direction principal est protégé.' });
       }
 
-      const announcement = one(
-        'SELECT id FROM announcements WHERE author_id = ? LIMIT 1',
-        [userId]
-      );
-      const document = one(
-        'SELECT id FROM documents WHERE uploader_id = ? LIMIT 1',
-        [userId]
-      );
-
+      const announcement = one('SELECT id FROM announcements WHERE author_id = ? LIMIT 1', [userId]);
+      const document = one('SELECT id FROM documents WHERE uploader_id = ? LIMIT 1', [userId]);
       if (announcement || document) {
         return res.status(409).json({
           ok: false,
-          message:
-            'Ce compte possède encore des annonces ou documents. Réattribuez-les avant la suppression.'
+          message: 'Ce compte possède encore des annonces ou documents. Réattribuez-les avant la suppression.'
         });
       }
 
@@ -362,7 +343,6 @@ function registerPersonnelRoutes(app) {
       run('UPDATE global_settings_history SET changed_by_user_id = NULL WHERE changed_by_user_id = ?', [userId]);
 
       run('DELETE FROM users WHERE id = ?', [userId]);
-
       await persistDatabaseNow();
 
       res.json({
