@@ -14,18 +14,22 @@ function clean(value) {
 }
 
 function nextMatricule(one) {
-  const row = one(`
-    SELECT MAX(
-      CASE
-        WHEN matricule GLOB 'ABY-[0-9][0-9][0-9][0-9][0-9][0-9]'
-        THEN CAST(SUBSTR(matricule, 5) AS INTEGER)
-        ELSE 0
-      END
-    ) AS max_number
-    FROM users
-  `);
+  let number = 1;
 
-  return `ABY-${String(Number(row?.max_number || 0) + 1).padStart(6, '0')}`;
+  while (
+    one(
+      `SELECT id
+       FROM users
+       WHERE matricule = ?
+         AND status != 'archived'
+       LIMIT 1`,
+      [`ABY-${String(number).padStart(6, '0')}`]
+    )
+  ) {
+    number += 1;
+  }
+
+  return `ABY-${String(number).padStart(6, '0')}`;
 }
 
 function publicUser(user) {
@@ -63,7 +67,6 @@ function registerPersonnelRoutes(app) {
       SELECT u.*, sp.signature, sp.force_password_change
       FROM users u
       LEFT JOIN staff_profiles sp ON sp.user_id = u.id
-      WHERE u.status != 'archived'
       ORDER BY
         CASE WHEN u.account_type = 'direction' THEN 0 ELSE 1 END,
         u.discord_username COLLATE NOCASE

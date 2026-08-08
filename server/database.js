@@ -485,6 +485,59 @@ async function initializeDatabase() {
         ('Équipe de Direction', '#dc2626', '👑', 1);
     `);
 
+
+    // Normalisation des matricules personnels :
+    // - les comptes archivés libèrent les numéros ABY-xxxxxx
+    // - les comptes actifs hors Direction repartent de ABY-000001
+    try {
+      const standardActiveUsers = all(`
+        SELECT id, matricule
+        FROM users
+        WHERE status != 'archived'
+          AND account_type != 'direction'
+        ORDER BY id ASC
+      `);
+
+      const archivedStandardUsers = all(`
+        SELECT id, matricule
+        FROM users
+        WHERE status = 'archived'
+          AND matricule GLOB 'ABY-[0-9][0-9][0-9][0-9][0-9][0-9]'
+        ORDER BY id ASC
+      `);
+
+      for (const user of archivedStandardUsers) {
+        database.run(
+          'UPDATE users SET matricule = ? WHERE id = ?',
+          [`ABY-ARCH-${String(user.id).padStart(6, '0')}`, user.id]
+        );
+      }
+
+      for (const user of standardActiveUsers) {
+        database.run(
+          'UPDATE users SET matricule = ? WHERE id = ?',
+          [`TMP-ABY-${user.id}`, user.id]
+        );
+      }
+
+      let matriculeNumber = 1;
+      for (const user of standardActiveUsers) {
+        database.run(
+          'UPDATE users SET matricule = ? WHERE id = ?',
+          [`ABY-${String(matriculeNumber).padStart(6, '0')}`, user.id]
+        );
+        matriculeNumber += 1;
+      }
+
+      if (standardActiveUsers.length || archivedStandardUsers.length) {
+        console.log(
+          `Matricules normalisés : ${standardActiveUsers.length} actif(s), ${archivedStandardUsers.length} archivé(s).`
+        );
+      }
+    } catch (error) {
+      console.error('Impossible de normaliser les matricules :', error);
+    }
+
     // Migration légère : ajoute le code d'alerte global aux anciennes bases.
     const maintenanceColumns = all('PRAGMA table_info(maintenance_settings)');
     if (!maintenanceColumns.some((column) => column.name === 'alert_code')) {
