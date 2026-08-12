@@ -14,22 +14,22 @@ function clean(value) {
 }
 
 function nextMatricule(one) {
-  let number = 1;
+  // Les matricules sont permanents : on ne recycle jamais un ancien numéro.
+  // On prend le plus grand ABY-000001... existant, même si le compte est archivé,
+  // puis on ajoute 1. Les matricules ABY-DIR-... sont ignorés.
+  const row = one(`
+    SELECT MAX(
+      CASE
+        WHEN matricule GLOB 'ABY-[0-9][0-9][0-9][0-9][0-9][0-9]'
+        THEN CAST(SUBSTR(matricule, 5) AS INTEGER)
+        ELSE 0
+      END
+    ) AS max_number
+    FROM users
+  `);
 
-  while (
-    one(
-      `SELECT id
-       FROM users
-       WHERE matricule = ?
-         AND status != 'archived'
-       LIMIT 1`,
-      [`ABY-${String(number).padStart(6, '0')}`]
-    )
-  ) {
-    number += 1;
-  }
-
-  return `ABY-${String(number).padStart(6, '0')}`;
+  const nextNumber = Number(row?.max_number || 0) + 1;
+  return `ABY-${String(nextNumber).padStart(6, '0')}`;
 }
 
 function publicUser(user) {
